@@ -12,13 +12,17 @@ function angle= angle_per_frame(d)
 % angle_without_edge(i+1) = angle_real(i) + angle_per_frame(d); 
 
 %% Function
-if d>=0 && d<180
+if d >= 0 && d < 180
     angle = d;
-elseif d>= 180
+    
+elseif d >= 180
     angle = -(360-d);
-elseif d<0 && d>-180
+    
+elseif d < 0 && d > -180
     angle = d;
-elseif d<=-180
+    
+elseif d <= -180
     angle = mod(d,360);
+    
 end
 

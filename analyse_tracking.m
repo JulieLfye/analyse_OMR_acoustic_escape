@@ -4,14 +4,13 @@ clear;
 clc;
 close all;
 
-disp('Select the tracking file');
-[file,path] = uigetfile('*.txt');
-t = readtable(fullfile(path,file),'Delimiter','\t');
-s = table2array(t);
-disp('Select the first frame');
+disp('Select the first frame of the binarized movie');
 [file,path] = uigetfile('*.tif');
+t = readtable(fullfile(path,'Tracking_Result\tracking.txt'),'Delimiter','\t');
+s = table2array(t);
 
 %% -------------------------------------------------------------------------
+tic
 % determine number of tracked object
 n = 0;
 i = 1;
@@ -55,7 +54,6 @@ clear t s
 % determine angle
 ang_body = nan(f,nb_frame);
 for f = 1:nb_detected_object
-    
     for i = 1:nb_frame
         w = 50;
         h = 50;
@@ -79,8 +77,44 @@ for f = 1:nb_detected_object
             end
         end
     end
-    hold on
-    plot(ang_body(f,:))
+    %     hold on
+    %     plot(ang_body(f,:));
 end
 
-% turn
+% correct head tail problem
+for f = 1:nb_detected_object
+    %     figure
+    %     plot(ang_body(f,:));
+    for i = 2:nb_frame-1
+        diff_g = ang_body(f,i) - ang_body(f,i-1);
+        diff_d = ang_body(f,i+1) - ang_body(f,i);
+        t = diff_g - diff_d;
+        if abs(diff_g) > 150*pi/180 && abs(diff_d) > 150*pi/180
+            
+            if abs(t) > 5
+                ang_body(f,i) = (ang_body(f,i-1) + ang_body(f,i+1))/2;
+            end
+        end
+        
+    end
+    %     hold on
+    %     plot(ang_body(f,:));
+end
+
+% angle with no 0/360° edge
+angle = ang_body;
+for f = 1:nb_detected_object
+%     figure
+%     plot(ang_body(f,:));
+    for i = 2:nb_frame
+        d = (ang_body(f,i) - ang_body(f,i-1))*180/pi;
+        if isnan(d) == 0
+            t = angle_per_frame(d)*pi/180;
+            angle(f,i) = angle(f,i-1) + t;
+        end
+    end
+%     hold on
+%     plot(angle(f,:))
+end
+
+toc

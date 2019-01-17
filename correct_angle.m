@@ -1,8 +1,10 @@
 function [angle] = correct_angle(nb_detected_object, nb_frame, ang_body)
 
+angle = ang_body;
+
 for f = 1:nb_detected_object
-%     figure
-%     plot(ang_body(f,:));
+    figure
+    plot(ang_body(f,:));
     for i = 2:nb_frame-1
         % correct angle
         diff_g = ang_body(f,i) - ang_body(f,i-1);
@@ -23,6 +25,6 @@ for f = 1:nb_detected_object
         
     end
     angle(f,end) = angle(f,end-1);
-%     hold on
-%     plot(angle(f,:));
+    hold on
+    plot(angle(f,:));
 end

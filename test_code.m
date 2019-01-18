@@ -1,5 +1,14 @@
-% reaction time
+% save angle_to_OMR
 
-% std angle when no motion ~5°
+% save(fullfile(a,'angle_to_OMR.mat'),angle_to_OMR)
 
-% look frame between [nb_frame-55  nb_frame]
+clc
+
+F = Focus();
+
+F.dpf = 5;
+F.OMR = 1000;
+F.V = 1;
+
+Data = F.load('data.m')
+    

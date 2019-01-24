@@ -18,15 +18,21 @@ end
 nb_frame = max(s(:,end));
 
 % determine number of detected object
-n = 0;
-i = 1;
 nb_detected_object = 0;
-while n~=1
-    if isnan(s(nb_frame*nb_tracked_object + i,1)) == 0
-        nb_detected_object = nb_detected_object + 1;
-        i = i+1;
-    else
-        n = 1;
+for i = 1:nb_frame
+    f = 1;
+    nb = 0;
+    
+    while f <= nb_tracked_object
+        if isnan(s(i*nb_tracked_object + f,1)) == 0
+            nb = nb + 1;
+            f = f + 1;
+        else
+            f = f + 1;
+        end
+    end
+    if nb > nb_detected_object
+        nb_detected_object = nb;
     end
 end
 

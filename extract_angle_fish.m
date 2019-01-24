@@ -1,5 +1,5 @@
 function [ang_body] = extract_angle_fish(nb_detected_object, nb_frame, w, h,...
-    xbody, ybody, file, path, P, fig)
+    xbody, ybody, file, path, fig)
 
 wb = waitbar(0,'Extract angle');
 ang_body = nan(nb_detected_object,nb_frame);
@@ -23,7 +23,6 @@ for f = 1:nb_detected_object
                     [~,n] = bwlabel(im_bw);
                 end
                 [~,~,ang] = get_orientation_distmap(im_bw);
-                ang = mod((ang-P.OMR.angle+360),360);
                 ang_body(f,i) = ang*pi/180; 
             end
         end

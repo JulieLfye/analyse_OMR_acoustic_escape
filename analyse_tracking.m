@@ -7,7 +7,8 @@ close all;
 % load(fullfile(path,file));
 
 disp('Select the first frame of the binarized movie');
-[file,path] = uigetfile('*.tif',[],'C:\Users\LJP\Documents\MATLAB\these\manip_pot_vibrant_data\');
+% [file,path] = uigetfile('*.tif',[],'C:\Users\LJP\Documents\MATLAB\these\manip_pot_vibrant_data\');
+[file,path] = uigetfile('*.tif',[],'G:\these\pot_vibrant');
 t = readtable(fullfile(path,'Tracking_Result\tracking.txt'),'Delimiter','\t');
 s = table2array(t);
 
@@ -24,26 +25,26 @@ fps = 150;
 
 
 %% ----- Extract parameter -----
+tic
 [nb_tracked_object, nb_frame, nb_detected_object, xbody, ybody]...
     = extract_parameters_from_fast_track(s);
-clear t s
 
 %% ----- Analyse ----
 % determine angle
 fig = 0;
-ang_body = nan(nb_detected_object,nb_frame);
 [ang_body] = extract_angle_fish(nb_detected_object, nb_frame, 50, 50,...
-    xbody, ybody, file, path, P, fig);
-
+    xbody, ybody, file, path, fig);
 
 % correct head tail problem
-fig = 0; % fig=1 plot some figures
+fig = 1; % fig=1 plot some figures
 [angle, angle_to_OMR] = correct_angle(nb_detected_object,...
     nb_frame, ang_body, fig, P);
 
 % reaction time
-[reaction_time, angle_before, angle_escape] = data_OMR_acoustic(nb_detected_object,...
+[reaction_time, reaction_time_ms, angle_before, angle_escape] = data_OMR_acoustic(nb_detected_object,...
     nb_frame, angle_to_OMR, fps);
+
+toc
 
 % clearvars -except reaction_time angle_before angle_escape P v file path angle_to_OMR
 

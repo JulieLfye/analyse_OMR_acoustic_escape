@@ -1,56 +1,46 @@
-function [angle, angle_to_OMR] = correct_angle(nb_detected_object,...
+function [angle, ang_OMR] = correct_angle(nb_detected_object,...
     nb_frame, ang_body, fig, P)
 
-angle = ang_body;
+ang = ang_body;
 
+% correct angle ie 180° problem
 for f = 1:nb_detected_object
-    %     if fig == 1
-    %         figure
-    %         plot(ang_body(f,:));
-    %     end
-    for i = 2:nb_frame-1
-        % correct angle
-        diff_g = ang_body(f,i) - ang_body(f,i-1);
-        diff_d = ang_body(f,i+1) - ang_body(f,i);
-        t = diff_g - diff_d;
-        if abs(diff_g) > 150*pi/180 && abs(diff_d) > 150*pi/180
-            if abs(t) > 5
-                ang_body(f,i) = (ang_body(f,i-1) + ang_body(f,i+1))/2;
-            end
+    i = 2;
+    while i < nb_frame-1
+        d = ang(f,i) - ang(f,i-1);
+        if abs(d) > 130*pi/180 && abs(d) < 4
+            ang(f,i) = ang(f,i-1);
+            i = i + 1;
+        else
+            i = i+1;
         end
-        
-        % remove 0/2*pi edge
-        d = (ang_body(f,i) - ang_body(f,i-1))*180/pi;
-        if isnan(d) == 0
-            ta = angle_per_frame(d)*pi/180;
-            angle(f,i) = angle(f,i-1) + ta;
-        end
-        
-    end
-    angle(f,end) = angle(f,end-1);
-    
-    if fig ==1
-        hold on
-        plot(angle(f,:));
     end
 end
 
-OMRangle = mod(P.OMR.angle,360)*pi/180;
-if OMRangle > pi
-    OMRangle = OMRangle - 2*pi;
+
+angle = ang;
+ang_OMR = nan(nb_detected_object,nb_frame);
+for f = 1:nb_detected_object
+    % remove 0/2*pi edge
+    for i = 2:nb_frame
+        d = (ang(f,i) - ang(f,i-1))*180/pi;
+        if isnan(d) == 0
+            ta(f,i) = angle_per_frame(d)*pi/180;
+            angle(f,i) = angle(f,i-1) + ta(f,i);
+        end
+    end
+    angle(f,end) = angle(f,end-1);
+    
+    %angle to OMR
+    OMRangle = mod(P.OMR.angle,360)*pi/180;
+    ang_OMR(f,:) = angle(f,:) - OMRangle;
+    ang1 = mean(ang_OMR(f,1:5),'omitnan');
+    if ang1 > pi
+        ang_OMR(f,:) = ang_OMR(f,:) - 2*pi;
+    end
 end
 
 if fig == 1
     figure
-end
-angle_to_OMR = angle - OMRangle;
-for f = 1:nb_detected_object
-    ang = angle(f,find(isnan(angle(f,:))==0,1));
-    if ang > pi
-        angle_to_OMR(f,:) = angle_to_OMR(f,:) - 2*pi;
-    end
-    if fig == 1
-        hold on
-        plot(angle_to_OMR(f,:))
-    end
+    plot(ang_OMR')
 end

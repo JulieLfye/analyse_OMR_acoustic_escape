@@ -8,8 +8,8 @@ close all;
 % load(fullfile(path,file));
 
 disp('Select the first frame of the binarized movie');
-% [file,path] = uigetfile('*.tif',[],'C:\Users\LJP\Documents\MATLAB\these\manip_pot_vibrant_data\');
-[file,path] = uigetfile('*.tif',[],'G:\these\pot_vibrant');
+[file,path] = uigetfile('*.tif',[],'C:\Users\LJP\Documents\MATLAB\these\manip_pot_vibrant_data\');
+% [file,path] = uigetfile('*.tif',[],'G:\these\pot_vibrant');
 t = readtable(fullfile(path,'Tracking_Result\tracking.txt'),'Delimiter','\t');
 s = table2array(t);
 

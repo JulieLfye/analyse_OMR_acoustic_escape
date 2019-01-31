@@ -16,8 +16,8 @@ classdef Focus < handle
             
             switch computer
                 case 'PCWIN64'
-%                     this.Root = 'C:\Users\LJP\Documents\MATLAB\these\manip_pot_vibrant_data\data\';
-                     this.Root = 'G:\these\pot_vibrant\data\';
+                    this.Root = 'C:\Users\LJP\Documents\MATLAB\these\manip_pot_vibrant_data\data\';
+%                      this.Root = 'G:\these\pot_vibrant\data\';
             end
             
         end

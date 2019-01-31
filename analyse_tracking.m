@@ -47,6 +47,8 @@ fig = 0;
 [ang_body] = extract_angle_fish(nb_detected_object, nb_frame, 50, 50,...
     xbody, ybody, file, path, fig);
 
+return
+
 % correct head tail problem
 fig = 1; % fig=1 plot some figures
 [angle, angle_to_OMR] = correct_angle(nb_detected_object,...

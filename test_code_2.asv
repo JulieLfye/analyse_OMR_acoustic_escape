@@ -1,0 +1,12 @@
+% test_code_2
+
+close all
+f = 8;
+ang = ang_body(f,:);
+figure;
+plot(ang);
+
+for i = 2:nb_frame
+    d = (ang(i)-ang(i-1))*180/pi;
+    ta = angle_per_frame(d);
+    if abs(ta) <= 

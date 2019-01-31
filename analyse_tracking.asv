@@ -42,7 +42,7 @@ fig = 0;
 tic
 [nb_tracked_object, nb_frame, nb_detected_object, xbody, ybody]...
     = extract_parameters_from_fast_track(s);
-toc
+
 %% ----- Analyse ----
 % determine angle
 [ang_body] = extract_angle_fish(nb_detected_object, nb_frame, 50, 50,...
@@ -57,6 +57,10 @@ toc
 [reaction_time1, reaction_time_ms1, angle_before1, angle_escape1,...
     nb_fish_considered1, nb_fish_escape1] = data_OMR_acoustic(nb_detected_object,...
     nb_frame, ang_OMR, fps);
+toc
+
+save(fullfile([path(1:end-10),'angle_to_OMR.mat']),'ang_OMR');
+
 
 if isfile(fullfile(F.path,'data_OMR.mat')) == 1
     D = F.load('data_OMR.mat');
@@ -78,5 +82,3 @@ else
     save(fullfile(F.path,'data_OMR.mat'),'reaction_time', 'reaction_time_ms',...
         'angle_before', 'angle_escape', 'nb_fish_considered', 'nb_fish_escape');
 end
-
-save(fullfile(path(1:end-10),'angle_body_OMR.mat'),'ang_OMR','ang_body')

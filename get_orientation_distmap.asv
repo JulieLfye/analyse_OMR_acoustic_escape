@@ -35,12 +35,7 @@ for k = 1:size(xhp,1)
         end
     end
 end
-if exist('xh','var') == 1
-    head = [xh, yh]; %head coordinates
-    tail = [xt, yt]; %swim bladder coordinates
-    ang = fishangle(xh, yh, xt, yt); %angle making by the fish
-else
-    head = [nan nan];
-    tail = [nan nan];
-    ang = nan;
-end
+if isempty(xh) 
+head = [xh, yh]; %head coordinates
+tail = [xt, yt]; %swim bladder coordinates
+ang = fishangle(xh, yh, xt, yt); %angle making by the fish

@@ -31,27 +31,29 @@ F = Focus();
 F.V = v;
 F.dpf = str2num(P.fish(4));
 F.OMR = P.OMR.Duration;
-
-%camera setting
-fps = 150;
-fig = 0;
+OMR_angle = P.OMR.angle;
 % fig = input('Draw figure with angle correction? [y]:1 [n]:0'  );
 
 
 %% ----- Extract parameter -----
-tic
 [nb_tracked_object, nb_frame, nb_detected_object, xbody, ybody]...
     = extract_parameters_from_fast_track(s);
-toc
+
 %% ----- Analyse ----
 % determine angle
+tic
 [ang_body] = extract_angle_fish(nb_detected_object, nb_frame, 50, 50,...
-    xbody, ybody, file, path, fig);
-
+    xbody, ybody, file, path, 0);
+toc
 %%
+[nb_detected_object, nb_frame] = size(ang_body);
+fig = 0;
+OMR_angle = 0;
+fps = 150;
+
 % correct head tail problem
 [angle, ang_OMR] = correct_angle(nb_detected_object,...
-    nb_frame, ang_body, fig, P);
+    nb_frame, ang_body, fig, OMR_angle);
 
 % reaction time
 [reaction_time1, reaction_time_ms1, angle_before1, angle_escape1,...

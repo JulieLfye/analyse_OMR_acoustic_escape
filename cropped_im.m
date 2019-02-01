@@ -15,7 +15,7 @@ if cmin <= 0
 end
 cmax = round(xc)+round(w/2);
 if cmax > size(im,2)
-    lmin = size(im,2);
+    cmax = size(im,2);
 end
 
 im_bw = im(lmin:lmax,cmin:cmax);

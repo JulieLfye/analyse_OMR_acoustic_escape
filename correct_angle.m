@@ -1,12 +1,11 @@
 function [angle, ang_OMR] = correct_angle(nb_detected_object,...
-    nb_frame, ang_body, fig, P)
+    nb_frame, ang_body, fig, OMRangle)
 
 close all
 
 ang = ang_body;
 angle = ang;
 ang_OMR = angle;
-OMRangle = mod(P.OMR.angle,360)*pi/180;
 
 for f = 1:nb_detected_object
 
@@ -162,7 +161,7 @@ l = find(isnan(ind2) == 0);
 for i = 1:size(l,2)
     q = ind2(l(i));
     
-    if q <= nb_frame-4 && q >= 1
+    if q <= nb_frame-4 && q >= 5
         md = mean(ang(f,q+3:q+4),'omitnan');
         mg = mean(ang(f,q-4:q-3),'omitnan');
     elseif q> nb_frame-4

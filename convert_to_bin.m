@@ -3,7 +3,7 @@ clear;
 clc;
 
 disp('Select the first frame');
-[file,path] = uigetfile('*.pgm',[],'C:\Users\LJP\Documents\MATLAB\these\data_OMR\');
+[file,path] = uigetfile('*.pgm',[],'C:\Users\LJP\Documents\MATLAB\these\manip_pot_vibrant_data\');
 n = input('Number of frame to open? ');
 im = imread(fullfile(path,file));
 movie = zeros(size(im,1),size(im,2));

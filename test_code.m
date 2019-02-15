@@ -1,87 +1,63 @@
-% save angle_to_OMR
+j = 1;
+all_file = [];
+all_path = [];
+nb = [];
 
-% save(fullfile(a,'angle_to_OMR.mat'),angle_to_OMR)
+while j~= 0
+    
+    disp('Select the first frame');
+    [f,p] = uigetfile('*.pgm',[],'C:\Users\LJP\Documents\MATLAB\these\manip_pot_vibrant_data\');
+    n = input('Number of frame to open? ');
+    
+    all_file = [all_file '/' f];
+    all_path = [all_path '/' p];
+    nb = [nb n];
+    
+    j = input('Other file to binarize? yes:1   no:0     ');
+end
 
-% clc
-%
-% F = Focus();
-%
-% F.dpf = 5;
-% F.OMR = 1000;
-% F.V = '1_0';
-%
-% Data = F.load('');
+all_file = [all_file '/'];
+all_path = [all_path '/'];
 
-%% -------------------------------------------------
-close all
-f = 9;
-ang1 = ang_body(f,:);
-figure;
-plot(ang1*180/pi);
-lim = 0.4;
-% for f = 1:nb_detected_object
+f_file = strfind(all_file,'/');
+f_path = strfind(all_path,'/');
 
-% correct angle ie 180° problem
-% d = [nan abs(diff(ang))];
-d = [nan diff(ang_body(f,:))];
-plot(d)
-[val,ind] = findpeaks(d,'MinPeakHeight',pi/2);
-hold on
-plot(ind,val,'o')
-f = 1;
-for i = 1:size(ind,2)
-    q = ind(i);
-    dg = d(q-1);
-    dd = d(q+1);
-    if abs(dg) <= lim && abs(dd) <= lim
-        dgg = d(q-2);
-        ddd = d(q+2);
-        if abs(dgg) <= lim && abs(ddd) <= lim
-            ang1(f,q) = ang1(f,q);
-        elseif abs(dgg) <= lim
-            ang1(f,q) = ang1(f,q-2);
-            ang1(f,q+1) = ang1(f,q-1);
-        elseif abs(ddd) <= lim
-            ang1(f,q-1) = ang1(f,q-3);
-            ang1(f,q) = ang1(f,q-2);
-        end
-    elseif abs(dg) <= lim
-        ang1(f,q) = ang1(f,q-1);
-    elseif abs(dd) <= lim
-        ang1(f,q-1) = ang1(f,q-2);
-    elseif dg < -lim && dd < -lim
-        ang1(f,q) = ang1(f,q-1);
+for k = 1:size(nb,2)
+    file = all_file(f_file(k)+1:f_file(k+1)-1);
+    path = all_path(f_path(k)+1:f_path(k+1)-1);
+    n = nb(k);
+    
+    im = imread(fullfile(path,file));
+    movie = zeros(size(im,1),size(im,2));
+    
+    imshow(movie);
+    
+    mkdir(path(1:end-6),'movie_bin');
+    a = fullfile(path(1:end-6),'movie_bin');
+    im_name = 'movie_bin_0000.tif';
+    imwrite(movie,fullfile(a,im_name));
+    
+    w = waitbar(0,'Conversion');
+    
+    tic
+    for i = 1:n
+        im = frame_open(file,path,i);
+        movie = uint8(frame_process(im)*255);
+        
+        m = floor(i/1000);
+        c = floor((i-m*1000)/100);
+        d = floor((i-m*1000-c*100)/10);
+        u = floor(i-m*1000-c*100-d*10);
+        s = size(im_name,2);
+        im_name(s-7) = num2str(m);
+        im_name(s-6) = num2str(c);
+        im_name(s-5) = num2str(d);
+        im_name(s-4) = num2str(u);
+        imwrite(movie,fullfile(a,im_name));
+        
+        waitbar(i/n,w);
     end
+    close(w);
+    close all
+    toc
 end
-% end
-% figure;
-% plot(ang_body(10,:));
-figure
-hold on
-plot(ang1')
-
-
-angle = ang1;
-ang_OMR = ang1;
-% for f = 1:nb_detected_object
-for i = 2:nb_frame
-    d = (ang1(f,i) - ang1(f,i-1))*180/pi;
-    if isnan(d) == 0
-        ta(i) = angle_per_frame(d);
-        if abs(ta(i)) <= 100
-            angle(f,i) = angle(f,i-1) + ta(i);
-        else
-            angle(f,i) = angle(f,i-1);
-        end
-    end
-end
-angle(f,end) = angle(f,end-1);
-
-OMRangle = mod(P.OMR.angle,360)*pi/180;
-ang_OMR(f,:) = angle(f,:) - OMRangle;
-ang2 = mean(angle(f,1:5),'omitnan');
-if ang2 > pi
-    ang_OMR(f,:) = angle(f,:) - 2*pi;
-end
-% end
-figure, plot(ang_OMR');

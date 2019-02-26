@@ -31,7 +31,7 @@ for k = 1:nb
     
     load(fullfile(path,file));
     
-    v = path(end-24:end-18);
+    v = path(end-24:end-22);
     dur =  P.OMR.Duration;
     m = floor(dur/1000);
     c = floor((dur-m*1000)/100);

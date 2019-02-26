@@ -80,14 +80,15 @@ while i <= 18
     i = i+1;
 end
 xlim ([-pi pi])
+y = ylim;
+plot(linspace(-pi,pi),y(2)*sin(linspace(-pi,pi)),':b')
 plot([0 0],ylim,'k')
 xticks([-pi -pi/2 0 pi/2 pi])
 % xticklabels({'0','90','180','270','360'})
 xticklabels({'\pi','\pi/2','0','-\pi/2','-\pi'})
 ylabel('Turn right                    Turn left')
 % ytickangle(90)
-y = ylim;
-plot(linspace(-pi,pi),y(2)*sin(linspace(-pi,pi)),':b')
+
 
 % subplot(1,2,2)
 % stem(ang_b(Lr)-pi,sign(ang_esc(Lr))*0.8,'k')

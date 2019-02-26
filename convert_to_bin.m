@@ -26,6 +26,9 @@ all_path = [all_path '/'];
 f_file = strfind(all_file,'/');
 f_path = strfind(all_path,'/');
 
+b = size(nb,2);
+
+tic
 for k = 1:size(nb,2)
     file = all_file(f_file(k)+1:f_file(k+1)-1);
     path = all_path(f_path(k)+1:f_path(k+1)-1);
@@ -41,11 +44,10 @@ for k = 1:size(nb,2)
     im_name = 'movie_bin_0000.tif';
     imwrite(movie,fullfile(a,im_name));
     
-    w = waitbar(0,'Conversion');
+    w = waitbar(0,sprintf('Conversion, movie %d / %d', k, b));
     
-    tic
     for i = 1:n
-        im = frame_open(file,path,i);
+        [im, f, p] = frame_open(file,path,i);
         movie = uint8(frame_process(im)*255);
         
         m = floor(i/1000);
@@ -58,10 +60,12 @@ for k = 1:size(nb,2)
         im_name(s-5) = num2str(d);
         im_name(s-4) = num2str(u);
         imwrite(movie,fullfile(a,im_name));
+        delete(fullfile(p,f));
         
         waitbar(i/n,w);
     end
     close(w);
     close all
-    toc
+    rmdir(p)
 end
+toc

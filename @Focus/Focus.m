@@ -28,7 +28,7 @@ classdef Focus < handle
         function p = path(this)
            
 %             p = [this.Root 'dpf_' num2str(this.dpf) filesep 'OMR_' num2str(this.OMR) filesep 'V_' num2str(this.V) filesep];
-            p = [this.Root num2str(this.dpf) '_dpf'  filesep this.V filesep 'OMR_' this.OMR filesep this.date filesep];
+            p = [this.Root num2str(this.dpf) '_dpf'  filesep this.V '_Vpp' filesep 'OMR_' this.OMR filesep this.date filesep];
             
         end
         

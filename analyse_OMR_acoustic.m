@@ -1,149 +1,85 @@
-% ----- Analyse OMR acoustic -----
-% close all
-clc;
-clear;
-close all;
+%% ----- Analyse OMR acoustic -----
 
-%% ----- load data
+clear
+close all
+clc
+
+j = 1;
+all_path = [];
+nb = 0;
+
+while j~= 0
+    
+    disp('Select the raw_data.mat to analyze (OMR_acoustic)');
+    [~,p] = uigetfile('*.mat',[],'C:\Users\LJP\Documents\MATLAB\these\data_OMR_acoustic\');
+    all_path = [all_path '/' p];
+    nb = nb + 1;
+    j = input('Other file to analyze? yes:1   no:0     ');
+end
+
+all_path = [all_path '/'];
+
+f_path = strfind(all_path,'/');
+
 F = Focus();
+fig = 1;
 
-F.dpf = 7;
-F.OMR = 2000;
-F.V = '1_0';
-
-Data = F.load('data_OMR');
-
-%% ----- Analyse
-% important data
-RT_ms = Data.reaction_time_ms;
-RT_ms(isnan(RT_ms)==1) = [];
-RT_ms(RT_ms < 0) = 0;
-
-ang_b = Data.angle_before;
-ang_b(isnan(ang_b)==1) = [];
-ang_b = mod(ang_b,2*pi);
-
-ang_esc = Data.angle_escape;
-ang_esc(isnan(ang_esc)==1) = [];
-
-% plot
-edges = 0:1000/150:108;
-figure;
-histogram(RT_ms,edges);
-
-Ll = []; % Left side, turn left
-Lr = []; % Left side, turn right
-Rl = []; % Right side, turn left
-Rr = []; % Right side, turn right
-
-for i = 1:size(ang_b,2)
-    if ang_b(i) < pi %left side to OMR
-        if ang_esc(i) < 0 %turn  right
-            Lr = [Lr i];
-        else % turn left
-            Ll = [Ll i];
-        end
-    elseif ang_b(i) >= pi %right side to OMR
-        if ang_esc(i) < 0 %turn right
-            Rr = [Rr i];
-        else %turn left
-            Rl = [Rl i];
-        end
+for k = 1:nb
+    
+    file = 'raw_data.mat';
+    path = all_path(f_path(k)+1:f_path(k+1)-1);
+    
+    load(fullfile(path,file));
+    
+    v = path(end-24:end-18);
+    dur =  P.OMR.Duration;
+    m = floor(dur/1000);
+    c = floor((dur-m*1000)/100);
+    d = floor((dur-m*1000-c*100)/10);
+    u = floor(dur-m*1000-c*100-d*10);
+    dur = [num2str(m) num2str(c) num2str(d) num2str(u)];
+    date = path(end-33:end-26);
+    dpf = str2num(P.fish(4));
+    
+    F.dpf = dpf;
+    F.V = v;
+    F.OMR = dur;
+    F.date = date;
+    
+    % analyse
+    [reaction_time1, reaction_time_ms1, angle_before1, angle_escape1,...
+    nb_fish_considered1, nb_fish_escape1, f_remove] = data_OMR_acoustic(nb_detected_object,...
+    nb_frame, angle_OMR, fps, fig);
+    
+    % create date folder if not existing
+    if isfolder(F.path) == 0
+        mkdir(F.path);
+    end
+    
+    % save data for the movie
+    r = path(end-16:end-11);
+    save(fullfile(F.path,['data_OMR_' r '.mat']), 'reaction_time1', 'reaction_time_ms1',...
+        'angle_before1', 'angle_escape1', 'nb_fish_considered1', 'nb_fish_escape1', 'f_remove');
+    
+    % save all data of this date
+    if isfile(fullfile(F.path,'data_OMR.mat')) == 1
+        D = F.load('data_OMR.mat');
+        reaction_time = [D.reaction_time reaction_time1];
+        reaction_time_ms = [D.reaction_time_ms reaction_time_ms1];
+        angle_before = [D.angle_before angle_before1];
+        angle_escape = [D.angle_escape angle_escape1];
+        nb_fish_considered = [D.nb_fish_considered nb_fish_considered1];
+        nb_fish_escape = [D.nb_fish_escape nb_fish_escape1];
+        save(fullfile(F.path,'data_OMR.mat'),'reaction_time', 'reaction_time_ms',...
+            'angle_before', 'angle_escape', 'nb_fish_considered', 'nb_fish_escape');
+    else
+        reaction_time = reaction_time1;
+        reaction_time_ms = reaction_time_ms1;
+        angle_before = angle_before1;
+        angle_escape = angle_escape1;
+        nb_fish_considered = nb_fish_considered1;
+        nb_fish_escape = nb_fish_escape1;
+        save(fullfile(F.path,'data_OMR.mat'),'reaction_time', 'reaction_time_ms',...
+            'angle_before', 'angle_escape', 'nb_fish_considered', 'nb_fish_escape');
     end
 end
-nbL = size(Lr,2) + size(Ll,2);
-nbR = size(Rr,2) + size(Rl,2);
-mL = (size(Ll,2) - size(Lr,2))/nbL;
-mR = (size(Rl,2) - size(Rr,2))/nbL;
-
-plot_OMR_acoustic(Lr, Ll, nbL, nbR, Rr, Rl, ang_b, ang_esc,...
-    F, mL, mR);
-subplot(1,2,1)
-hold on
-nb_fish = ['n = ', num2str(sum(Data.nb_fish_considered))];
-nb_esc = ['n_{esc} = ', num2str(sum(Data.nb_fish_escape))];
-text(2,0.9, nb_fish)
-text(2,0.8, nb_esc)
-title('All response')
-
-%% extract LLC and SLC escape
-%SLC
-ind_S = find(RT_ms < 20);
-ang_b_S = ang_b(ind_S);
-ang_esc_S = ang_esc(ind_S);
-
-Ll_S = []; % Left side, turn left
-Lr_S = []; % Left side, turn right
-Rl_S = []; % Right side, turn left
-Rr_S = []; % Right side, turn right
-
-for i = 1:size(ang_b_S,2)
-    if ang_b_S(i) < pi %left side to OMR
-        if ang_esc_S(i) < 0 %turn  right
-            Lr_S = [Lr_S i];
-        else % turn left
-            Ll_S = [Ll_S i];
-        end
-    elseif ang_b_S(i) >= pi %right side to OMR
-        if ang_esc_S(i) < 0 %turn right
-            Rr_S = [Rr_S i];
-        else %turn left
-            Rl_S = [Rl_S i];
-        end
-    end
-end
-nbL_S = size(Lr_S,2) + size(Ll_S,2);
-nbR_S = size(Rr_S,2) + size(Rl_S,2);
-mL_S = (size(Ll_S,2) - size(Lr_S,2))/nbL_S;
-mR_S = (size(Rl_S,2) - size(Rr_S,2))/nbL_S;
-
-plot_OMR_acoustic(Lr_S, Ll_S, nbL_S, nbR_S, Rr_S, Rl_S, ang_b_S, ang_esc_S,...
-    F, mL_S, mR_S);
-subplot(1,2,1)
-hold on
-nb_fish = ['n = ', num2str(sum(Data.nb_fish_considered))];
-nb_esc = ['n_{esc} = ', num2str(nbL_S + nbR_S)];
-text(2,0.9, nb_fish)
-text(2,0.8, nb_esc)
-title('Only SLC')
-
-
-%LLC
-ind_L = find(RT_ms > 20);
-ang_b_L = ang_b(ind_L);
-ang_esc_L = ang_esc(ind_L);
-
-Ll_L = []; % Left side, turn left
-Lr_L = []; % Left side, turn right
-Rl_L = []; % Right side, turn left
-Rr_L = []; % Right side, turn right
-
-for i = 1:size(ang_b_L,2)
-    if ang_b_L(i) < pi %left side to OMR
-        if ang_esc_L(i) < 0 %turn  right
-            Lr_L = [Lr_L i];
-        else % turn left
-            Ll_L = [Ll_L i];
-        end
-    elseif ang_b_L(i) >= pi %right side to OMR
-        if ang_esc_L(i) < 0 %turn right
-            Rr_L = [Rr_L i];
-        else %turn left
-            Rl_L = [Rl_L i];
-        end
-    end
-end
-nbL_L = size(Lr_L,2) + size(Ll_L,2);
-nbR_L = size(Rr_L,2) + size(Rl_L,2);
-mL_L = (size(Ll_L,2) - size(Lr_L,2))/nbL_L;
-mR_L = (size(Rl_L,2) - size(Rr_L,2))/nbL_L;
-
-plot_OMR_acoustic(Lr_L, Ll_L, nbL_L, nbR_L, Rr_L, Rl_L, ang_b_L, ang_esc_L,...
-    F, mL_L, mR_L); 
-subplot(1,2,1)
-hold on
-nb_fish = ['n = ', num2str(sum(Data.nb_fish_considered) - (nbL_S + nbL_S))];
-nb_esc = ['n_{esc} = ', num2str(nbL_L + nbR_L)];
-text(2,0.9, nb_fish)
-text(2,0.8, nb_esc)
-title('Only LLC')

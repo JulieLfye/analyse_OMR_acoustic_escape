@@ -166,8 +166,10 @@ for i = 1:size(l,2)
         mg = mean(ang(f,q-4:q-3),'omitnan');
     elseif q> nb_frame-4
         md = ang(f,end);
+        mg = mean(ang(f,q-4:q-3),'omitnan');
     elseif q <= 4
         mg = ang(f,1);
+        md = mean(ang(f,q+3:q+4),'omitnan');
     end
     
     % correct angle
@@ -220,4 +222,4 @@ if fig == 1
 end
 end
 
-figure, plot(ang_OMR')
+% figure, plot(ang_OMR')

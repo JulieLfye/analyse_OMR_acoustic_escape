@@ -10,7 +10,7 @@ nb = [];
 while j~= 0
     
     disp('Select the first frame');
-    [f,p] = uigetfile('*.pgm',[],'C:\Users\LJP\Documents\MATLAB\these\manip_pot_vibrant_data\');
+    [f,p] = uigetfile('*.pgm',[],'C:\Users\LJP\Documents\MATLAB\these\data_OMR_acoustic\');
     n = input('Number of frame to open? ');
     
     all_file = [all_file '/' f];

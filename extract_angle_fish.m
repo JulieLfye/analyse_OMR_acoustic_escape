@@ -8,7 +8,9 @@ for f = 1:nb_detected_object
         wa = w;
         ha = h;
         if isnan(xbody(f,i)) == 0
-            im = frame_open(file,path,i+1);
+            [path, file] = frame_open(file,path,i+1);
+            im = imread(fullfile(path,file));
+            
             [im_bw] = cropped_im(xbody(f,i),ybody(f,i),wa,ha,im);
             se = strel('square',2);
             im_bw = imdilate(im_bw,se);

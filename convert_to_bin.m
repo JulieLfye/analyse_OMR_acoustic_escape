@@ -1,4 +1,4 @@
-% convert movie into binarize movie (0-255)
+%% convert movie into binarize movie (0-255)
 clear;
 clc;
 

@@ -1,32 +1,50 @@
-% ----- Plot OMR acoustic analyses -----
-clc;
-clear;
-% close all;
+%% ----- Plot OMR acoustic analyses -----
 
-%% ----- load data
+clear;
+close all;
+clc;
+
 F = Focus();
 
 F.dpf = 5;
-F.OMR = '2000';
+F.OMR = '0500';
 F.V = '1_5';
-F.date = '19-02-20';
-Data1 = F.load('data_OMR');
 
-F.date = '19-02-25';
-Data2 = F.load('data_OMR');
+p = F.path;
+l = dir(p(1:end-1));
+a = size(l,1);
 
-%% Extract information for good and wrong turn
+% data to analyse
+RT_ms = [];
+ang_b = [];
+ang_esc = [];
+n_fish = [];
+n_fish_esc = [];
 
-RT_ms = [Data1.reaction_time_ms Data2.reaction_time_ms];
+
+while a > 2
+    F.date = l(a).name;
+    Data = F.load('data_OMR');
+    
+    RT_ms = [RT_ms Data.reaction_time_ms];
+    ang_b = [ang_b Data.angle_before];
+    ang_esc = [ang_esc Data.angle_escape];
+    n_fish = [n_fish Data.nb_fish_considered];
+    n_fish_esc = [n_fish_esc Data.nb_fish_escape];
+    
+    clear Data
+    a = a-1;
+end
+
+% remove nan value
 RT_ms(isnan(RT_ms)==1) = [];
 RT_ms(RT_ms < 0) = 0;
 
-ang_b = [Data1.angle_before Data2.angle_before];
-ang_b(isnan(ang_b)==1) = [];
+ang_b(isnan(RT_ms)==1) = [];
 ang_b = mod(ang_b,2*pi);
 
-ang_esc = [Data1.angle_escape Data2.angle_escape];
-ang_esc(isnan(ang_esc)==1) = [];
+ang_esc(isnan(RT_ms)==1) = [];
+
 
 % ----- All responses -----
 Ll = []; % Left side, turn left
@@ -128,8 +146,8 @@ f_plot_OMR_acoustic(Lr, Ll, nbL, nbR, Rr, Rl, ang_b, ang_esc,...
     mL, mR);
 subplot(1,2,1)
 hold on
-nb_fish = ['n = ', num2str(sum(Data1.nb_fish_considered)+sum(Data2.nb_fish_considered))];
-nb_esc = ['n_{esc} = ', num2str(sum(Data1.nb_fish_escape)+sum(Data2.nb_fish_escape))];
+nb_fish = ['n = ', num2str(sum(n_fish))];
+nb_esc = ['n_{esc} = ', num2str(sum(n_fish_esc))];
 text(2,0.9, nb_fish)
 text(2,0.8, nb_esc)
 title('All response')
@@ -139,8 +157,8 @@ f_plot_OMR_acoustic(Lr_S, Ll_S, nbL_S, nbR_S, Rr_S, Rl_S, ang_b_S, ang_esc_S,...
     mL_S, mR_S);
 subplot(1,2,1)
 hold on
-nb_fish = ['n = ', num2str(sum(Data1.nb_fish_considered)+sum(Data2.nb_fish_considered))];
-nb_esc = ['n_{esc} = ', num2str(nbL_S + nbR_S)];
+nb_fish = ['n = ', num2str(sum(n_fish))];
+nb_esc = ['n_{esc} = ', num2str(size(ind_SLC,2))];
 text(2,0.9, nb_fish)
 text(2,0.8, nb_esc)
 title('Only SLC')
@@ -150,8 +168,8 @@ f_plot_OMR_acoustic(Lr_L, Ll_L, nbL_L, nbR_L, Rr_L, Rl_L, ang_b_L, ang_esc_L,...
     mL_L, mR_L); 
 subplot(1,2,1)
 hold on
-nb_fish = ['n = ', num2str(sum(Data1.nb_fish_considered)+sum(Data2.nb_fish_considered) - (nbL_S + nbR_S))];
-nb_esc = ['n_{esc} = ', num2str(nbL_L + nbR_L)];
+nb_fish = ['n = ', num2str(sum(n_fish) - (nbL_S + nbR_S))];
+nb_esc = ['n_{esc} = ', num2str(size(ind_LLC,2))];
 text(2,0.9, nb_fish)
 text(2,0.8, nb_esc)
 title('Only LLC')

@@ -15,9 +15,7 @@ xlim ([-pi pi])
 plot([0 0],ylim,'k')
 xticks([-pi/2 pi/2])
 xticklabels({'Left side to OMR','Right side to OMR'})
-yticks([-0.5 0.5])
-yticklabels({'Turn right','Turn left'})
-ytickangle(90)
+ylabel('Turn right                    Turn left')
 % dpf = ['dpf = ' num2str(F.dpf)];
 % text(2,0.7, dpf)
 % text(2,0.6, ['V = ', F.V])
@@ -29,64 +27,67 @@ p = 20*pi/180;
 edges = -pi:p:pi;
 center = -pi+p/2:p:pi-p/2;
 
-ang = ang_b-pi;
 i = 1;
 p = nan(1,18);
 subplot(1,2,2)
 while i <= 18
-    f = find(ang >= edges(i) & ang < edges(i+1));
+    f = find(ang_b >= edges(i) & ang_b < edges(i+1));
     if isempty(f) == 0
-        p(i) = sum(sign(ang_esc(f)))/(nbL+nbR); % mean of turn
+        p(i) = mean(sign(ang_b(f)).*sign(ang_esc(f)))/(nbL+nbR); % mean of turn
+        % if p(i) < 0 : turn toward omr, good
+        % if p(i) > 0 : turn against omr, wrong 
         
-        if center (i) < 0 % left side
-            if p(i) >= 0 % left turn - wrong
-                plot(center(i),p(i),'k*');
+        if center (i) < 0 % right side
+            if p(i) >= 0 % right turn - wrong
+                plot(-center(i),-p(i),'k*');
                 hold on
-            elseif p(i) < 0 % right turn - good
-                plot(center(i),p(i),'k*');
+            elseif p(i) < 0 % left turn - good
+                plot(-center(i),-p(i),'k*');
                 hold on
             end
-            % left turn - wrong
+            % left turn - good
             a = find(ang_esc(f) > 0);
             if isempty(a) == 0
-                stem(center(i), size(a,2)/(nbL+nbR), 'r');
+                stem(-center(i), size(a,2)/(nbL+nbR), 'b');
             end
-            % right turn - good
+            % right turn - wrong
             a = find(ang_esc(f) <= 0);
             if isempty(a) == 0
-                stem(center(i), -size(a,2)/(nbL+nbR), 'b');
+                stem(-center(i), -size(a,2)/(nbL+nbR), 'r');
             end
             
-        elseif center(i) > 0 % right side
+        elseif center(i) > 0 % left side
             if p(i) <= 0 % right turn - good
-                plot(center(i),p(i),'k*');
+                plot(-center(i),p(i),'k*');
                 hold on
             elseif p(i) > 0 % left turn - wrong
-                plot(center(i),p(i),'k*');
+                plot(-center(i),p(i),'k*');
                 hold on
             end
             % right turn - wrong
             a = find(ang_esc(f) <= 0);
             if isempty(a) == 0
-                stem(center(i), -size(a,2)/(nbL+nbR), 'r');
+                stem(-center(i), -size(a,2)/(nbL+nbR), 'b');
             end
             % left turn - good
             a = find(ang_esc(f) > 0);
             if isempty(a) == 0
-                stem(center(i), size(a,2)/(nbL+nbR), 'b');
+                stem(-center(i), size(a,2)/(nbL+nbR), 'r');
             end
         end
     end
     i = i+1;
 end
 xlim ([-pi pi])
-y = ylim;
-plot(linspace(-pi,pi),y(2)*sin(linspace(-pi,pi)),':b')
+y = max(abs(ylim));
+ylim([-y y]);
+plot(linspace(-pi,pi),y*sin(linspace(-pi,pi)),':b')
 plot([0 0],ylim,'k')
 xticks([-pi -pi/2 0 pi/2 pi])
 % xticklabels({'0','90','180','270','360'})
 xticklabels({'\pi','\pi/2','0','-\pi/2','-\pi'})
 ylabel('Turn right                    Turn left')
+xlabel('Left side to OMR        Right side to OMR')
 % ytickangle(90)
 
 

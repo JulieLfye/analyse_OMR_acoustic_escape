@@ -229,16 +229,6 @@ text(-0.7,-b/2,'Against OMR', 'rotation', 90, 'HorizontalAlignment', 'center')
 text(-0.7,b/2,'To OMR', 'rotation', 90, 'HorizontalAlignment', 'center')
 
 % -- Plot % of response
-resp_all = sum(n_fish_esc)/sum(n_fish)*100;
-resp_SLC = size(ind_SLC,2)/sum(n_fish)*100;
-resp_LLC = size(ind_LLC,2)/sum(n_fish)*100;
-resp_LLCR = size(ind_LLC,2)/(sum(n_fish)-size(ind_SLC,2))*100;
-resp_by_all = [size(ind_SLC,2)/sum(n_fish_esc)*100, size(ind_LLC,2)/sum(n_fish_esc)*100];
-
-figure
-stem(resp_all)
-hold on
-stem([2 3], resp_by_all)
-% stem(3.4, resp_LLCR)
-xlim([0 4])
-ylim([0 100])
+resp_all = sum(n_fish_esc)/sum(n_fish);
+resp_SLC = size(ind_SLC,2)/sum(n_fish);
+resp

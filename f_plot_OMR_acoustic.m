@@ -33,7 +33,7 @@ subplot(1,2,2)
 while i <= 18
     f = find(ang_b >= edges(i) & ang_b < edges(i+1));
     if isempty(f) == 0
-        p(i) = mean(sign(ang_b(f)).*sign(ang_esc(f)))/(nbL+nbR); % mean of turn
+        p(i) = sum(sign(ang_b(f)).*sign(ang_esc(f)))/(nbL+nbR); % mean of turn
         % if p(i) < 0 : turn toward omr, good
         % if p(i) > 0 : turn against omr, wrong 
         

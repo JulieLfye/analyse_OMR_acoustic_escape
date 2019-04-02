@@ -1,27 +1,31 @@
 % test code
 
-% function [reaction_time, reaction_time_ms, angle_before, angle_escape,...
-%     nb_fish_considered, nb_fish_escape, f_remove] = data_OMR_acoustic(nb_detected_object,...
-%     nb_frame, angle_OMR, fps, fig)
+close all
 
-% I take only fish that are present from the beginning of the trial and
-% until the end
+figure;
+plot(vel(limwindow(1):limwindow(2)));
 
-x = xbody;
-y = ybody;
-ang = angle_OMR;
-f_remove = [];
+acc = diff(vel(limwindow(1):limwindow(2)));
+m = max(acc);
+[mags, peak] = findpeaks(acc, 'MinPeakHeight',m*0.8);
+figure;
+plot(acc);
+hold on;
+plot(peak,mags,'o');
 
-for i = 1:nb_detected_object
-    f = find(isnan(xbody(i,:))==1,1);
-    if isempty(f) == 0
-        f_remove = [f_remove i];
+mi = min(acc);
+
+itest = peak-5;
+acc1 = mags;
+while itest > 0
+    acc2 = acc(itest);
+    if acc2<acc1
+        itest = itest - 1;
+        acc1 = acc2;
+    else
+     indb = itest+1;
+     itest = 0;
     end
 end
 
-x(f_remove,:) = [];
-y(f_remove,:) = [];
-ang(f_remove,:) = [];
-
-% Bout detection
-
+plot(indb, acc(indb),'ro')

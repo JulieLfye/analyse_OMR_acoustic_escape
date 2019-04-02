@@ -109,10 +109,9 @@ f = 7;
             
             if isempty(k) == 0
                 % peak detected on both lvel and vel
-                [fg,x,y, correl, limbout] = fitgauss_vel_bout(prewindow, postwindow, peakInds, peakIndsvel, i, indbout, vel, im);
+                [fg,x,y, correl, limwindow] = fitgauss_vel_bout(prewindow, postwindow, peakInds, peakIndsvel, i, indbout, vel, im);
                 if peakInds(i) < size(vel,2)-70 % non escape bout
                     if correl > correl_lim && fg.sig < sig_lim
-                        % define beginning and end bout
                         indbout(1,i) = round(fg.mu - 3*fg.sig)-1;
                         indbout(2,i) = round(fg.mu + 3*fg.sig)+1;
                         if indbout(1,i) <= 0
@@ -131,6 +130,7 @@ f = 7;
                 elseif peakInds(i) >= size(vel,2)-70 % escape bout
                     if correl > 0.8 && fg.sig < sig_lim
                         % define beginning and end bout
+                        acc = abs(diff(vel(limwindow(1):limwindow(2))));
                         indbout(1,i) = round(fg.mu - 3*fg.sig)-1;
                         indbout(2,i) = round(fg.mu + 3*fg.sig)+1;
                         if indbout(1,i) <= 0
@@ -150,7 +150,7 @@ f = 7;
                 
             else
                 % peak detected on lvel but not on vel
-                [fg,x,y, correl, limbout] = fitgauss_vel_bout(prewindow, postwindow, peakInds, peakIndsvel, i, indbout, vel, im);
+                [fg,x,y, correl, limwindow] = fitgauss_vel_bout(prewindow, postwindow, peakInds, peakIndsvel, i, indbout, vel, im);
                 if correl > correl_lim && fg.sig < sig_lim
                     [mags, inds] = findpeaks(y,'minPeakHeight', 1.5*std(y));
                     indbout(1,i) = round(fg.mu - 3*fg.sig)-1;
@@ -183,7 +183,7 @@ f = 7;
                 indtoadd = [];
                 if peakIndsvel1(i) > round(0.15*fps) && peakIndsvel1(i) < size(vel,2)-round(0.1*fps)+1
                     ibout = zeros(2,size(peakIndsvel1,2));
-                    [fg,x,y, correl, limbout] = fitgauss_vel_bout(prewindow, postwindow, peakIndsvel1, peakIndsvel, i, ibout, vel, im);
+                    [fg,x,y, correl, limwindow] = fitgauss_vel_bout(prewindow, postwindow, peakIndsvel1, peakIndsvel, i, ibout, vel, im);
                     if correl > correl_lim && fg.sig < sig_lim
                         indtoadd = [round(fg.mu - 3*fg.sig)-1; round(fg.mu + 3*fg.sig)+1];
                     end

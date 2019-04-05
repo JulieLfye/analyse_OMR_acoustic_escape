@@ -1,4 +1,4 @@
-function [f,x,y, corr, limbout] = fitgauss_vel_bout(prewindow, postwindow, Indpeak, Indpeakvel, i, boutind, velocity, im)
+function [f,x,y, corr] = fitgauss_vel_bout(prewindow, postwindow, Indpeak, Indpeakvel, i, boutind, velocity, im)
 
 % boutind = ibout;
 % Indpeak = peakIndsvel1;
@@ -25,8 +25,6 @@ if i == size(Indpeak,2)
 else
     postbout(postbout>=Indpeak(i+1)-15) = [];
 end
-
-limbout = [prebout(1), postbout(end)];
 
 x = prebout(1):1:postbout(end);
 y = velocity(x);

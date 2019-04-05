@@ -31,7 +31,6 @@ if isempty(b2) == 0
     n2 = b2(1);
     i = 1;
     while i <= size(b2,2)+1 % 2 groups at least
-        %%
         if n1 == n2
             %create group of index
             gpind = ind(b1(n1):b1(n1)+1);
@@ -49,7 +48,11 @@ if isempty(b2) == 0
             m = round(mean(gpind));
             if mmax <= nb_frame-4 && mmin-4 >= 1
                 ang(1,mmin-3:m-1) = ang(1,mmin-4);
-                ang(1,m:mmax+3) = ang(1,mmax+4);
+                if abs(ang(1,mmax+4) - ang(1,mmin-4)) < pi
+                    ang(1,m:mmax+3) = ang(1,mmax+4);
+                else
+                    ang(1,m:mmax+3) = ang(1,mmin-4);
+                end
             elseif mmax > nb_frame-3
                 ang(1,m:end-1) = ang(1,end);
             elseif mmin <= 3
@@ -73,7 +76,11 @@ if isempty(b2) == 0
             m = round(mean(gpind));
             if mmax <= nb_frame-4 && mmin-4 >= 1
                 ang(1,mmin-3:m-1) = ang(1,mmin-4);
-                ang(1,m:mmax+3) = ang(1,mmax+4);
+                if abs(ang(1,mmax+4) - ang(1,mmin-4)) < pi
+                    ang(1,m:mmax+3) = ang(1,mmax+4);
+                else
+                    ang(1,m:mmax+3) = ang(1,mmin-4);
+                end
             elseif mmax > nb_frame-3
                 ang(1,m:end-1) = ang(1,end);
             elseif mmin <= 3
@@ -83,12 +90,18 @@ if isempty(b2) == 0
     end
 elseif isempty(b1) == 0 %only one group
     gpind = ind(min(b1):max(b1)+1);
+    ind2(b1) = nan;
+    ind2(max(b1)+1) = nan;
     mmin = min(gpind);
     mmax = max(gpind);
     m = round(mean(gpind));
     if mmax <= nb_frame-4 && mmin-4 >= 1
         ang(1,mmin-3:m-1) = ang(1,mmin-4);
-        ang(1,m:mmax+3) = ang(1,mmax+4);
+        if abs(ang(1,mmax+4) - ang(1,mmin-4)) < pi
+            ang(1,m:mmax+3) = ang(1,mmax+4);
+        else
+            ang(1,m:mmax+3) = ang(1,mmin-4);
+        end
     elseif mmax > nb_frame-3
         ang(1,m:end-1) = ang(1,end);
     elseif mmin <= 3
@@ -96,6 +109,10 @@ elseif isempty(b1) == 0 %only one group
     end
 end
 
+% figure,
+% plot(cang)
+% hold on
+% plot(ang)
 
 %% correct isolated point
 l = find(isnan(ind2) == 0);
@@ -124,6 +141,7 @@ for i = 1:size(l,2)
     end
 end
 
+% plot(ang)
 
 %% Correction of the 0-360 edge
 angle = ang;
@@ -152,9 +170,13 @@ if ang1 > pi
 end
 
 if fig == 1
+    disp('fig')
     figure;
-    plot(cang*180/pi);
+    plot(cang*180/pi,'r');
     hold on;
-    plot(ang*180/pi);
-    plot(ang_OMR*180/pi);
+    plot(angle*180/pi,'b');
+    plot(ang_OMR*180/pi,'k');
+    text(min(xlim)*1.05,max(ylim)*0.95,'red: raw angle')
+    text(min(xlim)*1.05,max(ylim)*0.90,'blue: corrected angle')
+    text(min(xlim)*1.05,max(ylim)*0.85,'black: OMR angle')
 end

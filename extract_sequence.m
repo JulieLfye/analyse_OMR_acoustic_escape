@@ -2,9 +2,8 @@ function [seq, xbody, ybody, ang_body] = extract_sequence(nb_detected_object,...
     xbody, ybody, ang_body, fps)
 
 seq = cell(1,nb_detected_object);
-nb_seq_object = zeros(1,nb_detected_object);
 
-% f = 1;
+f = 16;
 for f = 1:nb_detected_object
        
     cx = xbody(f,:);
@@ -38,7 +37,6 @@ for f = 1:nb_detected_object
         s = ind_seq(2,1) - start_seq;
         if s >= 0.2*fps
             seq{f} = [start_seq; ind_seq(2,1)];
-            nb_seq_object(1,f) = nb_seq_object(1,f) + 1;
         end
         
     else
@@ -50,7 +48,6 @@ for f = 1:nb_detected_object
                 if s >= 0.2*fps
                     seq{f} = [start_seq; ind_seq(2,i)];
                     start_seq = ind_seq(1,i+1);
-                    nb_seq_object(1,f) = nb_seq_object(1,f) + 1;
                 else
                     start_seq = ind_seq(1,i+1);
                 end
@@ -59,14 +56,13 @@ for f = 1:nb_detected_object
                 s = ind_seq(2,end) - start_seq;
                 if s >= 0.2*fps
                     seq{f} = [start_seq; ind_seq(2,end)];
-                    nb_seq_object(1,f) = nb_seq_object(1,f) + 1;
                 end
             end
         end
     end
     
     % correct nan value into sequence
-    for i = 1:nb_seq_object(1,f)
+    for i = 1:size(seq{f}(:,:),2)
         ft = find(isnan(cx(seq{f}(1,i):seq{f}(2,i)))==1)+seq{f}(1,i)-1;
         while isempty(ft) == 0
             cx(1,ft(1)) = cx(1,ft(1)-1);

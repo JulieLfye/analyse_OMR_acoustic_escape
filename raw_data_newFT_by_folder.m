@@ -1,4 +1,4 @@
-% test code new fasttrack
+%% ----- Extract raw data for OMR + acoustic -----
 
 close all;
 clc;
@@ -9,12 +9,13 @@ no_tracking = [];
 file = 'tracking.txt';
 
 disp('Select the folder with the movie to analyze');
-selpath = uigetdir('D:\OMR_acoustic_experiments\');
+selpath = uigetdir('D:\OMR_acoustic_experiments\OMR_acoustic');
 disp('Movie to analyse?');
 nb(1) = input('from ??     ');
 nb(2) = input('to ??       ');
 
 tic
+wb = waitbar(0,sprintf('Extract bout, movie 1 / %d', nb(2)-nb(1)+1));
 for k = nb(1):nb(2)
     
     d = floor(k/10);
@@ -23,7 +24,8 @@ for k = nb(1):nb(2)
     path = fullfile(selpath,run);
     
     if isfolder(fullfile(path, 'movie','Tracking_Result')) == 1
-        if isfile(fullfile(path,'raw_data_OMR')) == 0
+        if isfile(fullfile(path,'raw_data.mat')) == 0
+            disp('bug')
             
             path = fullfile(path,'movie','Tracking_Result');
             t = readtable(fullfile(path,file),'Delimiter','\t');
@@ -80,7 +82,7 @@ for k = nb(1):nb(2)
             
             % -- save raw data
             save(fullfile(path(1:end-21), 'raw_data.mat'), 'ang_body', 'angle_OMR',...
-                'file', 'fps', 'nb_detected_object', 'nb_frame',...
+                'file', 'fps', 'f_remove', 'nb_detected_object', 'nb_frame',...
                 'OMR_angle', 'path', 'xbody', 'ybody','P');
             disp('Raw data saved')
         else
@@ -90,6 +92,7 @@ for k = nb(1):nb(2)
     else
         no_tracking = [no_tracking, k];
     end
+    waitbar(k/nb(2)-nb(1)+1,wb,sprintf('Extract bout, movie %d / %d', k, nb(2)-nb(1)+1));
 end
 
 if isempty(no_tracking) == 0
@@ -97,4 +100,5 @@ if isempty(no_tracking) == 0
     disp(X);
 end
 
+close(wb)
 close all;

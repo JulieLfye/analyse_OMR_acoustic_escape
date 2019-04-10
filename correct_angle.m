@@ -221,5 +221,3 @@ if fig == 1
     plot(ang_OMR(f,:)*180/pi);
 end
 end
-
-% figure, plot(ang_OMR')

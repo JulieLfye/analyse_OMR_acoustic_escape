@@ -1,10 +1,9 @@
-function [indbout, xbody, ybody, angle_OMR] = extract_bout(xbody,...
-    ybody, angle_OMR, nb_detected_object, seq, fps, f_remove, checkIm)
+function [indbout, xbody, ybody] = extract_bout(xbody,...
+    ybody, nb_detected_object, seq, fps, f_remove, checkIm)
 
 
 cxf = xbody;
 cyf = ybody;
-ang = angle_OMR;
 
 prewindow = 0.2;
 prewindow = round(prewindow*fps);
@@ -16,7 +15,7 @@ correl_lim = 0.85;
 indbout = cell(1,nb_detected_object);
 
 %% bout detection for OMR_acoustic
-f = 17;
+f = 1;
 for f = 1:nb_detected_object
     b = find(f_remove==f);
     if isempty(b) == 1

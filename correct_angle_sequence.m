@@ -9,11 +9,12 @@ function [angle, ang_OMR] = correct_angle_sequence(cang, fig, OMRangle)
 % close all
 % fig = 1;
 % OMRangle = 0;
+% cang = ang_body(f,:);
 
 ang = cang;
 
 d  = [nan diff(ang)];
-[val,ind] = findpeaks(d,'MinPeakHeight',pi/2);
+[val,ind] = findpeaks(d,'MinPeakHeight',120*pi/180);
 % plot(d)
 % hold on
 % plot(ind,val,'o')
@@ -47,11 +48,11 @@ if isempty(b2) == 0
             mmax = max(gpind);
             m = round(mean(gpind));
             if mmax <= nb_frame-4 && mmin-4 >= 1
-                ang(1,mmin-3:m-1) = ang(1,mmin-4);
-                if abs(ang(1,mmax+4) - ang(1,mmin-4)) < pi
-                    ang(1,m:mmax+3) = ang(1,mmax+4);
+                ang(1,mmin-1:m-1) = ang(1,mmin-4);
+                if abs(ang(1,mmax+1) - ang(1,mmin-4)) < pi
+                    ang(1,m:mmax+1) = ang(1,mmax+4);
                 else
-                    ang(1,m:mmax+3) = ang(1,mmin-4);
+                    ang(1,m:mmax+1) = ang(1,mmin-4);
                 end
             elseif mmax > nb_frame-3
                 ang(1,m:end-1) = ang(1,end);
@@ -75,11 +76,11 @@ if isempty(b2) == 0
             mmax = max(gpind);
             m = round(mean(gpind));
             if mmax <= nb_frame-4 && mmin-4 >= 1
-                ang(1,mmin-3:m-1) = ang(1,mmin-4);
+                ang(1,mmin-1:m-1) = ang(1,mmin-4);
                 if abs(ang(1,mmax+4) - ang(1,mmin-4)) < pi
-                    ang(1,m:mmax+3) = ang(1,mmax+4);
+                    ang(1,m:mmax+1) = ang(1,mmax+4);
                 else
-                    ang(1,m:mmax+3) = ang(1,mmin-4);
+                    ang(1,m:mmax+1) = ang(1,mmin-4);
                 end
             elseif mmax > nb_frame-3
                 ang(1,m:end-1) = ang(1,end);
@@ -96,11 +97,11 @@ elseif isempty(b1) == 0 %only one group
     mmax = max(gpind);
     m = round(mean(gpind));
     if mmax <= nb_frame-4 && mmin-4 >= 1
-        ang(1,mmin-3:m-1) = ang(1,mmin-4);
+        ang(1,mmin-1:m-1) = ang(1,mmin-4);
         if abs(ang(1,mmax+4) - ang(1,mmin-4)) < pi
-            ang(1,m:mmax+3) = ang(1,mmax+4);
+            ang(1,m:mmax+1) = ang(1,mmax+4);
         else
-            ang(1,m:mmax+3) = ang(1,mmin-4);
+            ang(1,m:mmax+1) = ang(1,mmin-4);
         end
     elseif mmax > nb_frame-3
         ang(1,m:end-1) = ang(1,end);
@@ -170,13 +171,12 @@ if ang1 > pi
 end
 
 if fig == 1
-    disp('fig')
     figure;
     plot(cang*180/pi,'r');
     hold on;
     plot(angle*180/pi,'b');
-    plot(ang_OMR*180/pi,'k');
-    text(min(xlim)*1.05,max(ylim)*0.95,'red: raw angle')
-    text(min(xlim)*1.05,max(ylim)*0.90,'blue: corrected angle')
-    text(min(xlim)*1.05,max(ylim)*0.85,'black: OMR angle')
+%     plot(ang_OMR*180/pi,'k');
+    text(max(xlim)*0.8,max(ylim)*0.95,'red: raw angle')
+    text(max(xlim)*0.8,max(ylim)*0.90,'blue: corrected angle')
+%     text(min(xlim)*1.05,max(ylim)*0.85,'black: OMR angle')
 end

@@ -25,7 +25,6 @@ for k = nb(1):nb(2)
     
     if isfolder(fullfile(path, 'movie','Tracking_Result')) == 1
         if isfile(fullfile(path,'raw_data.mat')) == 0
-            disp('bug')
             
             path = fullfile(path,'movie','Tracking_Result');
             t = readtable(fullfile(path,file),'Delimiter','\t');
@@ -58,13 +57,16 @@ for k = nb(1):nb(2)
             
             xbody(f_remove,:) = nan;
             ybody(f_remove,:) = nan;
-            angle_OMR(f_remove,:) = nan;
+            ang_body(f_remove,:) = nan;
+            for i = 1:size(f_remove,2)
+                seq{f_remove(i)} = [];
+            end
             
             % -- Correct angle
             fig = 0;
             angle_OMR = nan(nb_detected_object,nb_frame);
             for f = 1:nb_detected_object
-                ind_seq = seq{1}(:,:);
+                ind_seq = seq{f}(:,:);
                 while isempty(ind_seq) == 0
                     cang = ang_body(f,ind_seq(1,1):ind_seq(2,1));
                     
@@ -77,13 +79,13 @@ for k = nb(1):nb(2)
             
             % -- Find bout
             checkIm = 0;
-            [indbout, xbody, ybody, angle_OMR] = extract_bout(xbody,...
-                ybody, angle_OMR, nb_detected_object, seq, fps, f_remove, checkIm);
-            
+            [indbout, xbody, ybody] = extract_bout(xbody,...
+                ybody, nb_detected_object, seq, fps, f_remove, checkIm);
+                       
             % -- save raw data
             save(fullfile(path(1:end-21), 'raw_data.mat'), 'ang_body', 'angle_OMR',...
-                'file', 'fps', 'f_remove', 'nb_detected_object', 'nb_frame',...
-                'OMR_angle', 'path', 'xbody', 'ybody','P');
+                'f_remove', 'file', 'fps', 'indbout', 'nb_detected_object', 'nb_frame',...
+                'OMR_angle', 'P', 'path', 'seq', 'xbody', 'ybody');
             disp('Raw data saved')
         else
             X = ['Raw data already extracted run ', num2str(d), num2str(u)];

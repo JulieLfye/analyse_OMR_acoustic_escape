@@ -3,7 +3,7 @@
 clc;
 close all;
 
-a = exist('path');
+a = exist('path','var');
 
 if  a == 0
     disp('Select one frame for creating background file')

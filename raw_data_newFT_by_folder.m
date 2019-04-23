@@ -24,13 +24,12 @@ for k = nb(1):nb(2)
     path = fullfile(selpath,run);
     
     if isfolder(fullfile(path, 'movie','Tracking_Result')) == 1
-        if isfile(fullfile(path,'raw_data.mat')) == 0
+%         if isfile(fullfile(path,'raw_data.mat')) == 0
             
             path = fullfile(path,'movie','Tracking_Result');
             t = readtable(fullfile(path,file),'Delimiter','\t');
             s = table2array(t);
-            
-            
+                        
             p = path(1:end-21);
             f = ['parametersrun_', num2str(d), num2str(u), '.mat'];
             load(fullfile(p,f));
@@ -39,12 +38,12 @@ for k = nb(1):nb(2)
             OMR_angle = P.OMR.angle;
             
             % -- Extract information from fast track
-            [nb_frame, nb_detected_object, xbody, ybody, ang_body]...
+            [nb_frame, nb_detected_object, xbody, ybody, ang_body, ang_tail]...
                 = extract_parameters_from_fast_track(s);
             
             % -- Determine the swimming sequence
-            [seq, xbody, ybody, ang_body] = extract_sequence(nb_detected_object,...
-                xbody, ybody, ang_body, fps);
+            [seq, xbody, ybody, ang_body, ang_tail] = extract_sequence(nb_detected_object,...
+                xbody, ybody, ang_body, ang_tail, fps);
             
             % -- Remove too short sequence
             f_remove = [];
@@ -58,6 +57,7 @@ for k = nb(1):nb(2)
             xbody(f_remove,:) = nan;
             ybody(f_remove,:) = nan;
             ang_body(f_remove,:) = nan;
+            ang_tail(f_remove,:) = nan;
             for i = 1:size(f_remove,2)
                 seq{f_remove(i)} = [];
             end
@@ -65,14 +65,19 @@ for k = nb(1):nb(2)
             % -- Correct angle
             fig = 0;
             angle_OMR = nan(nb_detected_object,nb_frame);
+            angle_tail = nan(nb_detected_object,nb_frame);
             for f = 1:nb_detected_object
                 ind_seq = seq{f}(:,:);
                 while isempty(ind_seq) == 0
+                    % correct body angle of the sequence
                     cang = ang_body(f,ind_seq(1,1):ind_seq(2,1));
-                    
-                    % correct angle of the sequence
-                    [~, corr_angle] = correct_angle_sequence(cang, fig, OMR_angle);
+                    [~, corr_angle] = correct_angle_sequence(cang, fig, OMR_angle, 230*pi/180);
                     angle_OMR(f,ind_seq(1,1):ind_seq(2,1)) = corr_angle;
+                    
+                    % correct tail angle of the sequence
+                    cang = ang_tail(f,ind_seq(1,1):ind_seq(2,1));
+                    [~, corr_angle] = correct_angle_sequence(cang, fig, OMR_angle, 2);
+                    angle_tail(f,ind_seq(1,1):ind_seq(2,1)) = corr_angle;
                     ind_seq(:,1) = [];
                 end
             end
@@ -83,19 +88,20 @@ for k = nb(1):nb(2)
                 ybody, nb_detected_object, seq, fps, f_remove, checkIm);
                        
             % -- save raw data
-            save(fullfile(path(1:end-21), 'raw_data.mat'), 'ang_body', 'angle_OMR',...
-                'f_remove', 'file', 'fps', 'indbout', 'nb_detected_object', 'nb_frame',...
-                'OMR_angle', 'P', 'path', 'seq', 'xbody', 'ybody');
+            save(fullfile(path(1:end-21), 'raw_data.mat'), 'ang_body', 'ang_tail', 'angle_OMR',...
+                'angle_tail', 'f_remove', 'file', 'fps', 'indbout', 'nb_detected_object',...
+                'nb_frame', 'OMR_angle', 'P', 'path', 'seq', 'xbody', 'ybody');
             disp('Raw data saved')
-        else
-            X = ['Raw data already extracted run ', num2str(d), num2str(u)];
-            disp(X)
-        end
+%         else
+%             X = ['Raw data already extracted run ', num2str(d), num2str(u)];
+%             disp(X)
+%         end
     else
         no_tracking = [no_tracking, k];
     end
     waitbar(k/nb(2)-nb(1)+1,wb,sprintf('Extract bout, movie %d / %d', k, nb(2)-nb(1)+1));
 end
+toc
 
 if isempty(no_tracking) == 0
     X = ['No tracking for run ', num2str(no_tracking)];
@@ -103,4 +109,4 @@ if isempty(no_tracking) == 0
 end
 
 close(wb)
-close all;
+% close all;

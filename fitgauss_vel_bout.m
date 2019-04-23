@@ -23,7 +23,7 @@ if i == size(Indpeak,2)
         postbout(postbout>=Indpeakvel(a)-10) = [];
     end
 else
-    postbout(postbout>=Indpeak(i+1)-15) = [];
+    postbout(postbout>=Indpeak(i+1)-5) = [];
 end
 
 x = prebout(1):1:postbout(end);

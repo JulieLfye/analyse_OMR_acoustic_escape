@@ -1,4 +1,4 @@
-function [angle, ang_OMR] = correct_angle_sequence(cang, fig, OMRangle)
+function [angle, ang_OMR] = correct_angle_sequence(cang, fig, OMRangle, lim)
 
 %% Information
 % input:
@@ -12,21 +12,22 @@ function [angle, ang_OMR] = correct_angle_sequence(cang, fig, OMRangle)
 % close all
 % fig = 1;
 % OMRangle = 0;
-% f = 3;
+% f = 2;
+% cang = ang_body(f,:);
+% lim = 230*pi/180;
 
-
-for f = 1:nb_detected_object
-    %     cang = ang_body(f,:);
+% for f = 1:nb_detected_object
+%         cang = ang_body(f,:);
     
     ang = cang;
     
     d  = [nan abs(diff(ang))];
     [val,indall] = findpeaks(d,'MinPeakHeight',120*pi/180);
-    %     plot(d)
-    %     hold on
-    %     plot(indall,val,'o')
-    %     plot(xlim,[210*pi/180 210*pi/180],'k')
-    ind = indall(val <= 210*pi/180);
+%         plot(d)
+%         hold on
+%         plot(indall,val,'o')
+%         plot(xlim,[230*pi/180 230*pi/180],'k')
+    ind = indall(val <= lim);
     
     %% correction of peak, not of 0-360 edges
     nb_frame = size(ang,2);
@@ -176,11 +177,11 @@ for f = 1:nb_detected_object
     
     if fig == 1
         figure;
-        plot(ang_body(f,:)*180/pi,'r');
+        plot(cang*180/pi,'r');
         hold on;
         plot(angle*180/pi,'b');
         %     text(max(xlim)*0.8,max(ylim)*0.95,'red: raw angle')
         %     text(max(xlim)*0.8,max(ylim)*0.90,'blue: corrected angle')
         %     text(min(xlim)*1.05,max(ylim)*0.85,'black: OMR angle')
     end
-end
+% end

@@ -3,12 +3,6 @@ close all
 
 frame = nb_frame-55+1:1:nb_frame;
 
-reaction_time = nan(1,nb_detected_object);
-angle_before = nan(1,nb_detected_object);
-angle_escape = nan(1,nb_detected_object);
-escape_matrix = nan(1,nb_detected_object);
-
-
 %% Determine fish that are present from OMR beginning to escape
 fOMR = find(isnan(xbody(:,150)) == 0)';
 fescape = find(isnan(xbody(:,end-50)) == 0)';
@@ -21,53 +15,93 @@ for i = 1:size(fOMR,2)
     end
 end
 fish_to_consider(isnan(fish_to_consider)==1) = [];
-
+reaction_time = nan(1,size(fish_to_consider,2));
+angle_before = reaction_time;
+a_escape = reaction_time;
+% angle_escapeb = reaction_time;
+escape_matrix = reaction_time;
 
 %% Determine reaction_time, angle_before, angle_escape and escape matrix
 
-i = 15;
+i = 3;
 escbr = nan(size(fish_to_consider));
 for i = 1:size(fish_to_consider,2)
-    f = fish_to_consider(i);
-    
-    angt = angle_tail(f,frame);
-    angb = angle_OMR(f,frame);
-    angbr = ang_body(f,frame);
-    ang = angbr;
-    for j = 2:size(frame,2)
-        d1 = (angbr(j) - angbr(j-1))*180/pi;
-        if isnan(d1) == 0
-            ta = angle_per_frame(d1);
-            if abs(ta) <= 170
-                ang(1,j) = ang(1,j-1) + ta*pi/180;
-            else
-                ang(1,j) = ang(1,j-1);
-            end
-        end
-    end
-    
-    d = abs(diff(angt));
-    b = find(d > 70*pi/180,1);
-    
-    if isempty(b)==0
-        
-        d1 = abs(diff(ang));
-        a(i) = 10*std(d1(1:6));
-        if 10*std(d1(1:6)) < 1
-            b1 = find(d1(7:end) > 10*std(d1(1:6)),1)+6;
-            if isempty(b1) == 0
-                escbr(i) = b1+frame(1)-1;
-            end
+f = fish_to_consider(i);
+
+angtr = ang_tail(f,frame);
+angbOMR = angle_OMR(f,frame);
+angbr = ang_body(f,frame);
+angb = angbr;
+angt = angtr;
+
+for j = 2:size(frame,2)
+    d1 = (angbr(j) - angbr(j-1))*180/pi;
+    if isnan(d1) == 0
+        ta = angle_per_frame(d1);
+        if abs(ta) <= 170
+            angb(1,j) = angb(1,j-1) + ta*pi/180;
         else
-           b1 = find( d1(7:end) > 0.,1)+6;
-        end
-            
-            figure,
-            plot(frame,angb*180/pi,'k')
-            hold on
-            if isnan(escbr(i))==0
-                plot(escbr(i),angb(escbr(i)-frame(1)+1)*180/pi,'ob')
-            end
-            
+            angb(1,j) = angb(1,j-1);
         end
     end
+end
+
+for j = 2:size(frame,2)
+    d1 = (angtr(j) - angtr(j-1))*180/pi;
+    if isnan(d1) == 0
+        ta = angle_per_frame(d1);
+        angt(1,j) = angt(1,j-1) + ta*pi/180;
+    end
+end
+
+%     d = abs(diff(angt));
+%     b = find(d(7:end-30) > 60*pi/180,1);
+m = prctile(angt(1:6),80);
+d2 = abs(angt-m);
+b2 = find(d2 > 70*pi/180,1);
+
+% figure
+% plot(angt*180/pi)
+% hold on
+% plot(b2,angt(b2)*180/pi,'o')
+
+if isempty(b2)==0
+    
+    d1 = abs(diff(angb));
+    a(i) = 6*std(d1(1:6));
+    if a(i) < 1 && a(i) > 0.1
+        b1 = find(d1(7:end-30) > 6*std(d1(1:6)),1)+6;
+        if isempty(b1) == 0
+            escbr(i) = b1+frame(1)-1;
+        end
+    else
+        b1 = find( d1(7:end-30) > 0.2,1)+6;
+        if isempty(b1) == 0
+            escbr(i) = b1+frame(1)-1;
+        end
+    end
+    angle_before(i) = mod(prctile(angbOMR(1:6),80),2*pi);
+    angle_escape(i) = sign(angt(b2)-angt(b2-1));
+%     angle_escapeb(i) = sign(angb(b1+1)-angb(b1));
+    
+%     figure
+%     plot(angb)
+%     hold on
+%     plot(b1,angb(b1),'o')
+    
+%     figure
+%     plot(frame,angbOMR*180/pi,'k')
+%     hold on
+%     if isnan(escbr(i))==0
+%         plot(escbr(i),angbOMR(escbr(i)-frame(1)+1)*180/pi,'ob')
+%     end
+% else
+%     figure
+%     plot(frame, angbOMR*180/pi, 'r')
+end
+end
+
+reaction_time = (escbr-min(escbr)+0.5)/fps*1000;
+t = find(angle_before>pi);
+angle_before(t) = angle_before(t)-2*pi;
+escape_matrix  = angle_before.*angle_escape;

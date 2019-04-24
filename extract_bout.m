@@ -14,8 +14,8 @@ correl_lim = 0.85;
 indbout = cell(1,nb_detected_object);
 
 %% bout detection for OMR_acoustic
-f = 10;
-% for f = 1:nb_detected_object
+f = 11;
+for f = 1:nb_detected_object
     b = find(f_remove==f);
     if isempty(b) == 1
         indb = seq{f}(1);
@@ -78,7 +78,7 @@ f = 10;
                     end
                 end
                 peakIndsvel1(k) = 0;
-                
+
                 if isempty(k) == 0
                     % peak detected on both lvel and vel
                     [fg,x,y, correl] = fitgauss_vel_bout(prewindow, postwindow, peakInds, peakIndsvel, i, indbt, vel, im);
@@ -267,4 +267,4 @@ f = 10;
         end
     end
     indbout{f} = indbt;
-% end
+end

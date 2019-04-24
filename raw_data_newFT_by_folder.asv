@@ -122,10 +122,6 @@ for k = nb(1):nb(2)
         rtms = reaction_time_ms;
         sesc = sign_escape;
         
-        if isfolder(F.path) == 0
-            mkdir(F.path);
-        end
-        
         if isfile(fullfile(F.path,'data_OMR.mat')) == 1
             D = F.load('data_OMR.mat');
             angle_before = [D.angle_before ang_b];
@@ -134,14 +130,20 @@ for k = nb(1):nb(2)
             nb_fish = [D.nb_fish nf];
             nb_fish_escape = [D.nb_fish_escape nfesc];
             reaction_time_ms = [D.reaction_time_ms rtms];
-            sign_escape = [D.sign_escape sesc];
-            save(fullfile(F.path,'data_OMR.mat'),'angle_before', 'escape_matrix',...
-                'fish_bout_OMR', 'nb_fish', 'nb_fish_escape', 'reaction_time_ms',...
-                'sign_escape');
+            eign_escape = [D.sign_escape sesc
+
+           
+            save(fullfile(F.path,'data_OMR.mat'),'reaction_time', 'reaction_time_ms',...
+                'angle_before', 'angle_escape', 'nb_fish_considered', 'nb_fish_escape');
         else
-            save(fullfile(F.path,'data_OMR.mat'),'angle_before', 'escape_matrix',...
-                'fish_bout_OMR', 'nb_fish', 'nb_fish_escape', 'reaction_time_ms',...
-                'sign_escape');
+            reaction_time = reaction_time1;
+            reaction_time_ms = reaction_time_ms1;
+            angle_before = angle_before1;
+            angle_escape = angle_escape1;
+            nb_fish_considered = nb_fish_considered1;
+            nb_fish_escape = nb_fish_escape1;
+            save(fullfile(F.path,'data_OMR.mat'), 'angle_before', 'escape_matrix',...
+            'fish_bout_OMR', 'nb_fish', 'reaction_time_ms', 'sign_escape')
         end
         
     else

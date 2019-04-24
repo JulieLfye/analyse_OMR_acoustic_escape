@@ -5,7 +5,6 @@ classdef Focus < handle
         dpf
         OMR
         V
-        date
         
         Root
         
@@ -17,7 +16,7 @@ classdef Focus < handle
             
             switch computer
                 case 'PCWIN64'
-                    this.Root = 'C:\Users\LJP\Documents\MATLAB\these\data_OMR_acoustic\data\';
+                    this.Root = 'D:\OMR_acoustic_experiments\OMR_acoustic\data\';
 %                      this.Root = 'G:\these\all_190327\data_OMR_acoustic\data\';
             end
             
@@ -28,7 +27,7 @@ classdef Focus < handle
         function p = path(this)
            
 %             p = [this.Root 'dpf_' num2str(this.dpf) filesep 'OMR_' num2str(this.OMR) filesep 'V_' num2str(this.V) filesep];
-            p = [this.Root num2str(this.dpf) '_dpf'  filesep this.V '_Vpp' filesep 'OMR_' this.OMR filesep this.date filesep];
+            p = [this.Root num2str(this.dpf) '_dpf'  filesep this.V '_Vpp' filesep 'OMR_' this.OMR filesep];
             
         end
         

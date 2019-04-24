@@ -2,6 +2,7 @@
 
 clc;
 close all;
+clear
 
 a = exist('path','var');
 

@@ -1,6 +1,6 @@
-function [reaction_time, reaction_time_ms, angle_before, sign_escape,...
-    fish_to_consider, escape_matrix, fish_bout_OMR, nb_fish, nb_fish_escape] = ...
-    data_OMR_acoustic(nb_frame, xbody, ang_tail, angle_OMR, ang_body, fps, indbout)
+% function [reaction_time, reaction_time_ms, angle_before, sign_escape,...
+%     fish_to_consider, escape_matrix, fish_bout_OMR, nb_fish, nb_fish_escape] = ...
+%     data_OMR_acoustic(nb_frame, xbody, ang_tail, angle_OMR, ang_body, fps, indbout)
 
 frame = nb_frame-55+1:1:nb_frame;
 
@@ -26,9 +26,9 @@ fish_bout_OMR = reaction_time;
 
 %% Determine reaction_time, angle_before, angle_escape and escape matrix
 
-i = 18;
+i = 13;
 escbr = nan(size(fish_to_consider));
-for i = 1:size(fish_to_consider,2)
+% for i = 1:size(fish_to_consider,2)
     f = fish_to_consider(i);
     
     angtr = ang_tail(f,frame);
@@ -59,13 +59,13 @@ for i = 1:size(fish_to_consider,2)
     
     m = prctile(angt(1:6),80);
     d2 = abs(angt-m);
-    b2 = find(d2 > 70*pi/180,1);
+    b2 = find(d2(7:end) > 70*pi/180,1);
     
-    if isempty(b2)==0 && b2 > 6 && b2 < 25
+    if isempty(b2)==0 && b2 < 
         
         d1 = abs(diff(angb));
         a(i) = 6*std(d1(1:6));
-        if a(i) < 1 && a(i) > 0.2
+        if a(i) < 1 && a(i) > 0.1
             b1 = find(d1(7:end-30) > 6*std(d1(1:6)),1)+6;
             if isempty(b1) == 0
                 escbr(i) = b1+frame(1)-1;
@@ -89,7 +89,7 @@ for i = 1:size(fish_to_consider,2)
         fish_bout_OMR(i) = 0;
     end
     
-end
+% end
 
 reaction_time = escbr;
 reaction_time_ms = (escbr-min(escbr)+0.5)/fps*1000;

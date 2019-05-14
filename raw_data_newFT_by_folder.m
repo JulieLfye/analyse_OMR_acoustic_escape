@@ -4,6 +4,8 @@ close all;
 clc;
 clear;
 
+warning off
+
 nb = [nan, nan];
 no_tracking = [];
 file = 'tracking.txt';
@@ -147,7 +149,7 @@ for k = nb(1):nb(2)
     else
         no_tracking = [no_tracking, k];
     end
-    waitbar(k/nb(2)-nb(1)+1,wb,sprintf('Extract bout, movie %d / %d', k, nb(2)-nb(1)+1));
+    waitbar((k-nb(1)+1)/(nb(2)-nb(1)+1),wb,sprintf('Extract bout, movie %d / %d', k-nb(1)+1, nb(2)-nb(1)+1));
 end
 toc
 

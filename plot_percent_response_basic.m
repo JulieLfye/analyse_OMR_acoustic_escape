@@ -11,6 +11,7 @@
 % mLLC(i,j) = mean(percent_LLC_all_fish);
 % mLLC(i,j+3) = std(percent_LLC_all_fish)/sqrt(N);
 
+
 close all
 figure
 x = [500, 1000, 2000];

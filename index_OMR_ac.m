@@ -1,13 +1,13 @@
 % Determine important index
 
-close all;
+hold on
 clear;
-clc;
+
 
 % -- load data
 F = Focus();
 
-F.dpf = '5';
+F.dpf = '7';
 F.OMR = '2000';
 F.V = '1_5';
 

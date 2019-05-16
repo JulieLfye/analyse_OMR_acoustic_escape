@@ -12,7 +12,7 @@ function [angle, ang_OMR] = correct_angle_sequence(cang, fig, OMRangle, lim)
 % close all
 % fig = 1;
 % OMRangle = 0;
-% f = 10;
+% f = 11;
 % cang = ang_tail(f,:);
 % lim = 3;
 

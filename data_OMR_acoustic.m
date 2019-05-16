@@ -26,14 +26,14 @@ fish_bout_OMR = reaction_time;
 
 %% Determine reaction_time, angle_before, angle_escape and escape matrix
 
-i = 18;
+i = 2;
 escbr = nan(size(fish_to_consider));
 for i = 1:size(fish_to_consider,2)
     f = fish_to_consider(i);
     
-    a = size(indbout{f},1);
+    a = size(indbout{f},2);
     
-    if a > 0
+    if a > 0 % there is a bout, so maybe an escape
         
         angtr = ang_tail(f,frame);
         angbOMR = angle_OMR(f,frame);
@@ -45,7 +45,7 @@ for i = 1:size(fish_to_consider,2)
             d1 = (angbr(j) - angbr(j-1))*180/pi;
             if isnan(d1) == 0
                 ta = angle_per_frame(d1);
-                if abs(ta) <= 170
+                if abs(ta) <= 165
                     angb(1,j) = angb(1,j-1) + ta*pi/180;
                 else
                     angb(1,j) = angb(1,j-1);
@@ -68,14 +68,14 @@ for i = 1:size(fish_to_consider,2)
         if isempty(b2)==0 && b2 > 6 && b2 < 25
             
             d1 = abs(diff(angb));
-            a(i) = 6*std(d1(1:6));
-            if a(i) < 1 && a(i) > 0.2
+            a = 6*std(d1(1:6));
+            if a < 1 && a > 0.25
                 b1 = find(d1(7:end-30) > 6*std(d1(1:6)),1)+6;
                 if isempty(b1) == 0
                     escbr(i) = b1+frame(1)-1;
                 end
             else
-                b1 = find( d1(7:end-30) > 0.2,1)+6;
+                b1 = find( d1(7:end-30) > 0.25,1)+6;
                 if isempty(b1) == 0
                     escbr(i) = b1+frame(1)-1;
                 end

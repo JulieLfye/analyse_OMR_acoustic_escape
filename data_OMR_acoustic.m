@@ -26,14 +26,14 @@ fish_bout_OMR = reaction_time;
 
 %% Determine reaction_time, angle_before, angle_escape and escape matrix
 
-i = 2;
+i = 1;
 escbr = nan(size(fish_to_consider));
 for i = 1:size(fish_to_consider,2)
     f = fish_to_consider(i);
     
-    a = size(indbout{f},2);
+    a = find(indbout{f}(1,:) > nb_frame - 65);
     
-    if a > 0 % there is a bout, so maybe an escape
+    if isempty(a) == 0 % there is a bout, so maybe an escape
         
         angtr = ang_tail(f,frame);
         angbOMR = angle_OMR(f,frame);
@@ -41,6 +41,7 @@ for i = 1:size(fish_to_consider,2)
         angb = angbr;
         angt = angtr;
         
+        % correct raw body angle
         for j = 2:size(frame,2)
             d1 = (angbr(j) - angbr(j-1))*180/pi;
             if isnan(d1) == 0
@@ -53,6 +54,7 @@ for i = 1:size(fish_to_consider,2)
             end
         end
         
+        % correct raw tail angle
         for j = 2:size(frame,2)
             d1 = (angtr(j) - angtr(j-1))*180/pi;
             if isnan(d1) == 0
@@ -61,6 +63,8 @@ for i = 1:size(fish_to_consider,2)
             end
         end
         
+        % difference between tail angle before bout and tail angle
+        % after
         m = prctile(angt(1:6),80);
         d2 = abs(angt-m);
         b2 = find(d2 > 70*pi/180,1);
@@ -93,6 +97,18 @@ for i = 1:size(fish_to_consider,2)
             fish_bout_OMR(i) = 0;
         end
         
+        if fig == 1
+            subplot(1,2,1)
+            plot(frame,d2*180/pi)
+            hold on
+            plot(escbr(i),d2(escbr(i)-frame(1)+1)*180/pi,'ro')
+            title('diff tail angle')
+            subplot(1,2,2)
+            plot(frame,angb*180/pi)
+            hold on
+            plot(escbr(i),angb(escbr(i)-frame(1)+1)*180/pi,'ro')
+            title('body angle')
+        end
     end
     
 end

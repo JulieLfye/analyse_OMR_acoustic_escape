@@ -62,8 +62,8 @@ for k = nb(1):nb(2)
         % -- Remove too short sequence
         f_remove = [];
         for i = 1:nb_detected_object
-            f(i) = size(find(isnan(xbody(i,:))==0),2);
-            if f(i) < 55
+            f = size(find(isnan(xbody(i,:))==0),2);
+            if f < 55
                 f_remove = [f_remove i];
             end
         end
@@ -106,13 +106,34 @@ for k = nb(1):nb(2)
             fish_to_consider, escape_matrix, fish_bout_OMR, nb_fish, nb_fish_escape] = ...
             data_OMR_acoustic(nb_frame, xbody, ang_tail, angle_OMR, ang_body, fps, indbout);
         
+        % -- Determine direction of the first bout direction (if turn)
+        mat_first_turn = nan(1,size(fish_to_consider,2));
+        i = 13;
+        for i = 1:size(fish_to_consider,2)
+            f = fish_to_consider(i);
+            indbt = indbout{f};
+            t = find(indbt(1,:) > 150,1);
+            esc_im = (1000 + P.OMR.Duration)*150/1000 - 20;
+            if indbt(1,t) < esc_im % first bout before esc, during OMR
+                ang_b = mean(angle_OMR(f,indbt(1,t)-10:indbt(1,t)));
+                ang_b = mod(ang_b, 2*pi);
+                if ang_b > pi
+                    ang_b = ang_b - 2*pi;
+                end
+                turn = angle_OMR(f,indbt(2,t))-angle_OMR(f,indbt(1,t));
+                if abs(turn) > 20*pi/180
+                    mat_first_turn(i) = -sign(ang_b)*sign(turn);
+                end  
+            end
+        end
+        
         % -- save data
         save(fullfile(path(1:end-21), 'raw_data.mat'), 'ang_body', 'ang_tail', 'angle_OMR',...
             'angle_tail', 'f_remove', 'file', 'fps', 'indbout', 'nb_detected_object',...
             'nb_frame', 'OMR_angle', 'P', 'path', 'seq', 'xbody', 'ybody');
         save(fullfile(path(1:end-21), 'OMR_ac_data.mat'), 'angle_before', 'escape_matrix',...
             'fish_bout_OMR', 'fish_to_consider', 'nb_fish', 'nb_fish_escape', 'reaction_time',...
-            'reaction_time_ms', 'sign_escape')
+            'reaction_time_ms', 'sign_escape', 'mat_first_turn')
         disp('Data saved')
         
         % -- save OMR + ac data in a summary file
@@ -123,6 +144,8 @@ for k = nb(1):nb(2)
         nfesc = nb_fish_escape;
         rtms = reaction_time_ms;
         sesc = sign_escape;
+        mft = mat_first_turn;
+        first_bout_direction = mft;
         
         if isfolder(F.path) == 0
             mkdir(F.path);
@@ -137,13 +160,14 @@ for k = nb(1):nb(2)
             nb_fish_escape = [D.nb_fish_escape nfesc];
             reaction_time_ms = [D.reaction_time_ms rtms];
             sign_escape = [D.sign_escape sesc];
+            first_bout_direction = [D.first_bout_direction mft];
             save(fullfile(F.path,'data_OMR.mat'),'angle_before', 'escape_matrix',...
                 'fish_bout_OMR', 'nb_fish', 'nb_fish_escape', 'reaction_time_ms',...
                 'sign_escape');
         else
             save(fullfile(F.path,'data_OMR.mat'),'angle_before', 'escape_matrix',...
                 'fish_bout_OMR', 'nb_fish', 'nb_fish_escape', 'reaction_time_ms',...
-                'sign_escape');
+                'sign_escape', 'first_bout_direction');
         end
         
     else

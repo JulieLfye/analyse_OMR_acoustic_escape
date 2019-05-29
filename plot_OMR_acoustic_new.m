@@ -1,13 +1,13 @@
 % plot OMR acoustic
 
-close all;
+% close all;
 clear;
 clc;
 
 F = Focus();
 
-F.dpf = 7;
-F.V = '3_0';
+F.dpf = 5;
+F.V = '1_5';
 
 OMR = [0, 500, 1000, 1500, 2000];
 std_all = nan(1,5);

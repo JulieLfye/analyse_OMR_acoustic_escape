@@ -14,7 +14,7 @@ correl_lim = 0.85;
 indbout = cell(1,nb_detected_object);
 
 %% bout detection for OMR_acoustic
-f = 5;
+f = 4;
 for f = 1:nb_detected_object
     b = find(f_remove==f);
     if isempty(b) == 1
@@ -267,6 +267,7 @@ for f = 1:nb_detected_object
                 y = vel(indbt(1,i):1:indbt(2,i));
                 plot(x,y,'r')
             end
+            title({['fish n°' num2str(f-1)]})
         end
         indbout{f} = indbt;
     end

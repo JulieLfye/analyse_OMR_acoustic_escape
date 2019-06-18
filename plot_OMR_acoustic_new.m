@@ -3,6 +3,7 @@
 % close all;
 clear;
 clc;
+close all;
 
 F = Focus();
 
@@ -161,41 +162,3 @@ f_plot_new_OMR_acoustic(OMR, m_ok, std_ok, n_f, n_ok, p_ok, F, 'Good quadrant');
 
 % -- Fish in the good quadrant without bout
 f_plot_new_OMR_acoustic(OMR, m_oknomov, std_oknomov, n_f, n_oknomov, p_oknomov, F, 'Good quadrant, no bout');
-
-% -- Response proba
-if F.dpf == 5
-    figure;
-    plot(OMR, pb_all, '-kd', 'MarkerFaceColor','k')
-    hold on
-    plot(OMR, pb_SLC, '-ko', 'MarkerFaceColor','k')
-    plot(OMR, pb_LLC, '-ks', 'MarkerFaceColor','k')
-    xlim([-100 2100])
-    ylim([0 100])
-    xticks([0, 500, 1000, 1500, 2000])
-    xticklabels({'0', '500', '1000', '1500', '2000'})
-    title({'Response probabilities'})
-end
-if F.dpf == 6
-    figure;
-    plot(OMR, pb_all, '-rd', 'MarkerFaceColor','r')
-    hold on
-    plot(OMR, pb_SLC, '-ro', 'MarkerFaceColor','r')
-    plot(OMR, pb_LLC, '-rs', 'MarkerFaceColor','r')
-    xlim([-100 2100])
-    ylim([0 100])
-    xticks([0, 500, 1000, 1500, 2000])
-    xticklabels({'0', '500', '1000', '1500', '2000'})
-    title({'Response probabilities'})
-end
-if F.dpf == 7
-    figure;
-    plot(OMR, pb_all, '-bd', 'MarkerFaceColor','b')
-    hold on
-    plot(OMR, pb_SLC, '-bo', 'MarkerFaceColor','b')
-    plot(OMR, pb_LLC, '-bs', 'MarkerFaceColor','b')
-    xlim([-100 2100])
-    ylim([0 100])
-    xticks([0, 500, 1000, 1500, 2000])
-    xticklabels({'0', '500', '1000', '1500', '2000'})
-    title({'Response probabilities'})
-end

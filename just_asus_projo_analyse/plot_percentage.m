@@ -7,25 +7,14 @@ clc;
 F = Focus();
 
 % Experiment Protocol background
-r = 'whole_illumination_asus_projo'; % OMR duration 0,500,1000,1500,2000
-% r = 'whole_illumination'; % OMR duration 0,250,500,750,1000
-% r = 'OMR_fixed'; % OMR duration 0,250,500,750,1000
+r = 'whole_illumination_asus_projo';
 
 F.Root = fullfile('D:\OMR_acoustic_experiments',r,'OMR_acoustic\data\');
 
-F.dpf = 5;
+F.dpf = 7;
 F.V = '3_0';
 
-a = F.path;
-a = a(1:end-5);
-a = dir(a);
-
-for i = 1:size(a,1)-2
-    b = a(i+2).name;
-    OMRname(i,:) = b(end-3:end);
-    OMR(i) = str2num(OMRname(i,:));
-end
-
+OMR = [0, 500, 1000, 1500, 2000];
 pb_all = nan(1,5);
 
 n_oknomov = nan(1,5);
@@ -35,9 +24,23 @@ n_SLCoknomov = n_SLC;
 n_LLCoknomov = n_LLC;
 
 k = 1;
-for k = 1:size(a,1)-2
-    F.OMR = OMRname(k,:);
-    [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F);
+for k = 1:5
+    if k == 1
+        F.OMR = '0000';
+        [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F);
+    elseif k == 2
+        F.OMR = '0500';
+        [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F);
+    elseif k == 3
+        F.OMR = '1000';
+        [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F);
+    elseif k == 4
+        F.OMR = '1500';
+        [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F);
+    elseif k == 5
+        F.OMR = '2000';
+        [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F);
+    end
     
     n_f(k) = sum(n_fish);
     n_f_esc(k) = sum(n_fish_esc);
@@ -98,7 +101,7 @@ for k = 1:size(a,1)-2
         n_LLC(k) = size(ind_LLC,2);
         ind_LLCoknomov = find(RT_ms(indoknomov) > 20);
         n_LLCoknomov(k) = size(ind_LLCoknomov,2);
-        
+                
     end
     
     %% -- Probabilities --
@@ -118,7 +121,7 @@ for k = 1:size(a,1)-2
         fS = find(iSLC <= sum(n_fish_esc(1:i)));
         iLLC(fL) = [];
         iSLC(fS) = [];
-        
+         
         pS(i) = size(fS,2)/n_fish_esc(i)*100;
         pL(i) = size(fL,2)/n_fish_esc(i)*100;
         
@@ -129,7 +132,7 @@ for k = 1:size(a,1)-2
         iLLCok(fL) = [];
         iSLCok(fS) = [];
         iok(fa) = [];
-        
+         
         pSok(i) = size(fS,2)/n_fish_esc(i)*100;
         pLok(i) = size(fL,2)/n_fish_esc(i)*100;
         pok(i) = size(fa,2)/n_fish_esc(i)*100;
@@ -159,64 +162,62 @@ elseif F.dpf == 5
 end
 
 %% plot all fish
-xlimv = [OMR(1)-100;OMR(end)+100];
-
 % responsiveness
 figure(1);
 hold on
 errorbar(OMR,p_all,s_all,'-d','Color',color, 'MarkerFaceColor',color)
-xlim(xlimv)
+xlim([-100 2100])
 ylim([0 100])
-xticks(OMR)
-xticklabels({num2str(OMR(1)), num2str(OMR(2)), num2str(OMR(3)), num2str(OMR(4)), num2str(OMR(5))})
+xticks([0, 500, 1000, 1500, 2000])
+xticklabels({'0', '500', '1000', '1500', '2000'})
 title({'Fish responsiveness'})
 
-% % SLC
-% figure(2);
-% hold on
-% errorbar(OMR,mpS,spS,'-o','Color',color, 'MarkerFaceColor',color)
-% xlim(xlimv)
-% ylim([0 100])
-% xticks(OMR)
-% xticklabels({num2str(OMR(1)), num2str(OMR(2)), num2str(OMR(3)), num2str(OMR(4)), num2str(OMR(5))})
-% title({'SLC probalities'})
-% % LLC
-% figure(3);
-% hold on
-% errorbar(OMR,mpL,spL,'-s','Color',color, 'MarkerFaceColor',color)
-% xlim(xlimv)
-% ylim([0 100])
-% xticks(OMR)
-% xticklabels({num2str(OMR(1)), num2str(OMR(2)), num2str(OMR(3)), num2str(OMR(4)), num2str(OMR(5))})
-% title({'LLC probalities'})
-% 
-% %% plot fish good quadrant no move
-% % responsiveness
-% figure(4);
-% hold on
-% errorbar(OMR,mpok,spok,'-d','Color',color, 'MarkerFaceColor',color)
-% xlim(xlimv)
-% ylim([0 100])
-% xticks(OMR)
-% xticklabels({num2str(OMR(1)), num2str(OMR(2)), num2str(OMR(3)), num2str(OMR(4)), num2str(OMR(5))})
-% title({'Fish responsiveness, good quadrant, no bout'})
-% 
-% % SLC
-% figure(5);
-% hold on
-% errorbar(OMR,mpSok,spSok,'-o','Color',color, 'MarkerFaceColor',color)
-% xlim(xlimv)
-% ylim([0 100])
-% xticks(OMR)
-% xticklabels({num2str(OMR(1)), num2str(OMR(2)), num2str(OMR(3)), num2str(OMR(4)), num2str(OMR(5))})
-% title({'SLC probalities, good quadrant, no bout'})
-% 
-% % LLC
-% figure(6);
-% hold on
-% errorbar(OMR,mpLok,spLok,'-s','Color',color, 'MarkerFaceColor',color)
-% xlim(xlimv)
-% ylim([0 100])
-% xticks(OMR)
-% xticklabels({num2str(OMR(1)), num2str(OMR(2)), num2str(OMR(3)), num2str(OMR(4)), num2str(OMR(5))})
-% title({'LLC probalities, good quadrant, no bout'})
+% SLC
+figure(2);
+hold on
+errorbar(OMR,mpS,spS,'-o','Color',color, 'MarkerFaceColor',color)
+xlim([-100 2100])
+ylim([0 100])
+xticks([0, 500, 1000, 1500, 2000])
+xticklabels({'0', '500', '1000', '1500', '2000'})
+title({'SLC probalities'})
+% LLC
+figure(3);
+hold on
+errorbar(OMR,mpL,spL,'-s','Color',color, 'MarkerFaceColor',color)
+xlim([-100 2100])
+ylim([0 100])
+xticks([0, 500, 1000, 1500, 2000])
+xticklabels({'0', '500', '1000', '1500', '2000'})
+title({'LLC probalities'})
+
+%% plot fish good quadrant no move
+% responsiveness
+figure(4);
+hold on
+errorbar(OMR,mpok,spok,'-d','Color',color, 'MarkerFaceColor',color)
+xlim([-100 2100])
+ylim([0 100])
+xticks([0, 500, 1000, 1500, 2000])
+xticklabels({'0', '500', '1000', '1500', '2000'})
+title({'Fish responsiveness, good quadrant, no bout'})
+
+% SLC
+figure(5);
+hold on
+errorbar(OMR,mpSok,spSok,'-o','Color',color, 'MarkerFaceColor',color)
+xlim([-100 2100])
+ylim([0 100])
+xticks([0, 500, 1000, 1500, 2000])
+xticklabels({'0', '500', '1000', '1500', '2000'})
+title({'SLC probalities, good quadrant, no bout'})
+
+% LLC
+figure(6);
+hold on
+errorbar(OMR,mpLok,spLok,'-s','Color',color, 'MarkerFaceColor',color)
+xlim([-100 2100])
+ylim([0 100])
+xticks([0, 500, 1000, 1500, 2000])
+xticklabels({'0', '500', '1000', '1500', '2000'})
+title({'LLC probalities, good quadrant, no bout'})

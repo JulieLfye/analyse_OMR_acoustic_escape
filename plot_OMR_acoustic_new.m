@@ -3,14 +3,31 @@
 % close all;
 clear;
 clc;
-close all;
+% close all;
 
 F = Focus();
 
-F.dpf = 5;
-F.V = '1_5';
+% Experiment Protocol background
+% r = 'whole_illumination_asus_projo'; % OMR duration 0,500,1000,1500,2000
+r = 'whole_illumination'; % OMR duration 0,250,500,750,1000
+% r = 'OMR_fixed'; % OMR duration 0,250,500,750,1000
 
-OMR = [0, 500, 1000, 1500, 2000];
+F.Root = fullfile('D:\OMR_acoustic_experiments',r,'OMR_acoustic\data\');
+
+
+F.dpf = 7;
+F.V = '3_0';
+
+a = F.path;
+a = a(1:end-5);
+a = dir(a);
+
+for i = 1:size(a,1)-2
+    b = a(i+2).name;
+    OMRname(i,:) = b(end-3:end);
+    OMR(i) = str2num(OMRname(i,:));
+end
+
 std_all = nan(1,5);
 m_all = nan(1,5);
 p_all = nan(1,5);
@@ -38,23 +55,10 @@ n_ok = nan(1,5);
 n_oknomov = nan(1,5);
 
 k = 1;
-for k = 1:5
-    if k == 1
-        F.OMR = '0000';
-        [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F);
-    elseif k == 2
-        F.OMR = '0500';
-        [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F);
-    elseif k == 3
-        F.OMR = '1000';
-        [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F);
-    elseif k == 4
-        F.OMR = '1500';
-        [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F);
-    elseif k == 5
-        F.OMR = '2000';
-        [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F);
-    end
+for k = 1:size(a,1)-2
+    F.OMR = OMRname(k,:);
+    [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F);
+    
     
     n_f(k) = sum(n_fish);
     n_f_esc(k) = sum(n_fish_esc);

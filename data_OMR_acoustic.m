@@ -1,6 +1,6 @@
 function [reaction_time, reaction_time_ms, angle_before, sign_escape,...
     fish_to_consider, escape_matrix, fish_bout_OMR, nb_fish, nb_fish_escape] = ...
-    data_OMR_acoustic(nb_frame, xbody, ang_tail, angle_OMR, ang_body, fps, indbout)
+    data_OMR_acoustic(nb_frame, xbody, ang_tail, angle_OMR, ang_body, fps, indbout,fig)
 
 frame = nb_frame-55+1:1:nb_frame;
 

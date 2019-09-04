@@ -4,10 +4,16 @@ clc;
 
 F = Focus();
 
+% Experiment Protocol background
+r = 'whole_illumination_asus_projo'; % OMR duration 0,500,1000,1500,2000
+% r = 'whole_illumination'; % OMR duration 0,250,500,750,1000
+% r = 'OMR_fixed'; % OMR duration 0,250,500,750,1000
+
+F.Root = fullfile('D:\OMR_acoustic_experiments',r,'OMR_acoustic\data\');
+
 F.dpf = 5;
 F.V = '1_5';
 F.OMR = '0500';
-
 
 [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F);
 

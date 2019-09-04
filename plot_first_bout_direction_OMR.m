@@ -6,38 +6,34 @@ clc;
 
 F = Focus();
 
+% Experiment Protocol background
+% r = 'whole_illumination_asus_projo'; % OMR duration 0,500,1000,1500,2000
+r = 'whole_illumination'; % OMR duration 0,250,500,750,1000
+% r = 'OMR_fixed'; % OMR duration 0,250,500,750,1000
+
+F.Root = fullfile('D:\OMR_acoustic_experiments',r,'OMR_acoustic\data\');
+
 F.dpf = 5;
 F.V = '1_5';
 
-OMR = [500, 1000, 1500, 2000];
+a = F.path;
+a = a(1:end-5);
+a = dir(a);
+
+for i = 1:size(a,1)-2
+    b = a(i+2).name;
+    OMRname(i,:) = b(end-3:end);
+    OMR(i) = str2num(OMRname(i,:));
+end
 
 
-for k = 2:5
-    if k == 2
-        F.OMR = '0500';
-        Data = F.load('data_OMR');
-        fbd = Data.first_bout_direction;
-        f = find(isnan(fbd)==1);
-        fbd(f) = [];
-    elseif k == 3
-        F.OMR = '1000';
-        Data = F.load('data_OMR');
-        fbd = Data.first_bout_direction;
-        f = find(isnan(fbd)==1);
-        fbd(f) = [];
-    elseif k == 4
-        F.OMR = '1500';
-        Data = F.load('data_OMR');
-        fbd = Data.first_bout_direction;
-        f = find(isnan(fbd)==1);
-        fbd(f) = [];
-    elseif k == 5
-        F.OMR = '2000';
-        Data = F.load('data_OMR');
-        fbd = Data.first_bout_direction;
-        f = find(isnan(fbd)==1);
-        fbd(f) = [];
-    end
+for k = 2:size(a,1)-2
+    F.OMR = OMRname(k,:);
+    Data = F.load('data_OMR');
+    fbd = Data.first_bout_direction;
+    f = find(isnan(fbd)==1);
+    fbd(f) = [];
+    
     
     n_f(k-1) = sum(Data.n_fish);
     n_fbd(k-1) = size(fbd,2);

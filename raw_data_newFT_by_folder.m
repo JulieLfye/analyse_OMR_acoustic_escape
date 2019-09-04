@@ -11,13 +11,15 @@ no_tracking = [];
 file = 'tracking.txt';
 
 disp('Select the folder with the movie to analyze');
-selpath = uigetdir('D:\OMR_acoustic_experiments\OMR_acoustic');
+selpath = uigetdir('D:\OMR_acoustic_experiments');
 disp('Movie to analyse?');
 nb(1) = input('from ??     ');
 nb(2) = input('to ??       ');
 
 F = Focus();
 F.V = selpath(end-6:end-4);
+
+F.Root = [selpath(1:end-16) 'data\'];
 
 tic
 wb = waitbar(0,sprintf('Extract bout, movie 1 / %d', nb(2)-nb(1)+1));
@@ -29,7 +31,7 @@ for k = nb(1):nb(2)
     path = fullfile(selpath,run);
     
     if isfolder(fullfile(path, 'movie','Tracking_Result')) == 1
-        %         if isfile(fullfile(path,'raw_data.mat')) == 0
+%                 if isfile(fullfile(path,'raw_data.mat')) == 0
         
         path = fullfile(path,'movie','Tracking_Result');
         t = readtable(fullfile(path,file),'Delimiter','\t');
@@ -45,8 +47,12 @@ for k = nb(1):nb(2)
         F.dpf = P.fish(4);
         if P.OMR.Duration == 0
             F.OMR = '0000';
+        elseif P.OMR.Duration == 250
+            F.OMR = '0250';
         elseif P.OMR.Duration == 500
             F.OMR = '0500';
+        elseif P.OMR.Duration == 750
+            F.OMR = '0750';
         else
             F.OMR = num2str(P.OMR.Duration);
         end
@@ -102,9 +108,10 @@ for k = nb(1):nb(2)
             ybody, nb_detected_object, seq, fps, f_remove, checkIm);
         
         % -- Determine escape matrix
+        fig = 0;
         [reaction_time, reaction_time_ms, angle_before, sign_escape,...
             fish_to_consider, escape_matrix, fish_bout_OMR, nb_fish, nb_fish_escape] = ...
-            data_OMR_acoustic(nb_frame, xbody, ang_tail, angle_OMR, ang_body, fps, indbout);
+            data_OMR_acoustic(nb_frame, xbody, ang_tail, angle_OMR, ang_body, fps, indbout,fig);
         
         % -- Determine direction of the first bout direction (if turn)
         mat_first_turn = nan(1,size(fish_to_consider,2));
@@ -127,7 +134,7 @@ for k = nb(1):nb(2)
             end
         end
         
-        % -- save data
+        % -- save raw data
         save(fullfile(path(1:end-21), 'raw_data.mat'), 'ang_body', 'ang_tail', 'angle_OMR',...
             'angle_tail', 'f_remove', 'file', 'fps', 'indbout', 'nb_detected_object',...
             'nb_frame', 'OMR_angle', 'P', 'path', 'seq', 'xbody', 'ybody');
@@ -163,7 +170,7 @@ for k = nb(1):nb(2)
             first_bout_direction = [D.first_bout_direction mft];
             save(fullfile(F.path,'data_OMR.mat'),'angle_before', 'escape_matrix',...
                 'fish_bout_OMR', 'nb_fish', 'nb_fish_escape', 'reaction_time_ms',...
-                'sign_escape');
+                'sign_escape','first_bout_direction');
         else
             save(fullfile(F.path,'data_OMR.mat'),'angle_before', 'escape_matrix',...
                 'fish_bout_OMR', 'nb_fish', 'nb_fish_escape', 'reaction_time_ms',...
@@ -184,3 +191,4 @@ end
 
 close(wb)
 % close all;
+selpath

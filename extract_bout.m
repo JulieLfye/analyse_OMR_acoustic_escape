@@ -14,7 +14,7 @@ correl_lim = 0.85;
 indbout = cell(1,nb_detected_object);
 
 %% bout detection for OMR_acoustic
-f = 4;
+f = 5;
 for f = 1:nb_detected_object
     b = find(f_remove==f);
     if isempty(b) == 1
@@ -54,10 +54,10 @@ for f = 1:nb_detected_object
         
         [peakMagsvel, peakIndsvel] = findpeaks(vel,'MinPeakDistance', minIPI, 'MinPeakHeight', 1);
         
-        %     plot(vel)
-        %     hold on
-        %     plot(peakIndsvel,peakMagsvel,'bo')
-        %     plot(peakInds, vel(peakInds)+5,'ko')
+%             plot(vel)
+%             hold on
+%             plot(peakIndsvel,peakMagsvel,'bo')
+%             plot(peakInds, vel(peakInds)+5,'ko')
         
         %% part to define bout
         indbt = nan(2,size(peakInds,2));
@@ -197,6 +197,7 @@ for f = 1:nb_detected_object
                         acc = abs(diff(vel(x(x<peakIndsvel1(i)))));
                         xacc = x(x<peakIndsvel1(i));
                         xacc(1) = [];
+                        if indtoadd(1) < size(vel,2)
                         if x(1) < indtoadd(1)
                             accp = abs(diff(vel(x(1):indtoadd(1)+1)));
                         else
@@ -209,6 +210,9 @@ for f = 1:nb_detected_object
                         end
                         if isempty(a) == 0
                             indtoadd(1) = a;
+                        end
+                        else
+                           indtoadd = []; 
                         end
                     end
                     if isempty(indtoadd) == 0
@@ -254,6 +258,14 @@ for f = 1:nb_detected_object
             if indbt(1,1) == 1
                 indbt(:,1) = [];
             end
+            a = find(indbt(1,:)<1);
+            if isempty(a) == 0
+                indbt(:,a) = [];
+            end
+            a = find(indbt(2,:)<1);
+            if isempty(a) == 0
+                indbt(:,a) = [];
+            end
         end
         
         if checkIm == 1
@@ -267,7 +279,6 @@ for f = 1:nb_detected_object
                 y = vel(indbt(1,i):1:indbt(2,i));
                 plot(x,y,'r')
             end
-            title({['fish n°' num2str(f-1)]})
         end
         indbout{f} = indbt;
     end

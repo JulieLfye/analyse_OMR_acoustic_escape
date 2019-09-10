@@ -158,22 +158,18 @@ for k = nb(1):nb(2)
             'sign_escape', 'mat_first_turn', 'angle_OMR', 'angle_tail')
         disp('Data saved')
         
+        return
+        
         % -- save OMR + ac data in a summary file
         ang_b = angle_before;
-        angle_before = [];
         esc_mat = escape_matrix;
-        escape_matrix = [];
         fbOMR = fish_bout_OMR;
-        fish_bout_OMR = [];
         nf = nb_fish;
         nfesc = nb_fish_escape;
         rtms = reaction_time_ms;
-        reaction_time_ms = [];
         sesc = sign_escape;
-        sign_escape = [];
         mft = mat_first_turn;
         fFT = fish_to_consider_FT;
-        fish_to_consider_FT = [];
         
         if isfolder(F.path) == 0
             mkdir(F.path);

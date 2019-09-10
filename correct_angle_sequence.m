@@ -169,7 +169,7 @@ angle(1,end) = mean(angle(1,end-5:end-2),'omitnan');
 
 
 %% Angle to OMR
-ang_OMR = angle - OMRangle;
+ang_OMR = angle - OMRangle*pi/180;
 ang1 = mean(ang_OMR(1,1:5),'omitnan');
 if ang1 > pi
     ang_OMR(1,:) = ang_OMR(1,:) - 2*pi;

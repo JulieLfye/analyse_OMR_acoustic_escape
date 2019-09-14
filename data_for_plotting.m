@@ -1,4 +1,4 @@
-function [RT_ms, ang_b, sign_esc, mat_esc, n_fish, n_fish_esc, fbout] = data_for_plotting(F)
+function [RT_ms1, ang_b1, sign_esc1, mat_esc1, n_fish, n_fish_esc, fbout1] = data_for_plotting(F)
 
 Data = F.load('data_OMR');
 
@@ -11,12 +11,27 @@ n_fish_esc = Data.nb_fish_escape;
 fbout = Data.fish_bout_OMR;
 
 % remove nan value
-ang_b(isnan(RT_ms)==1) = [];
+ang_b1 = [];
+sign_esc1 = [];
+mat_esc1 = [];
+fbout1 = [];
+RT_ms1 = [];
 
-ang_b = mod(ang_b,2*pi);
-ang_b(ang_b>pi) = ang_b(ang_b>pi)-2*pi;
-sign_esc(isnan(RT_ms)==1) = [];
-mat_esc(isnan(RT_ms)==1) = [];
-fbout(isnan(RT_ms)==1) = [];
-RT_ms(isnan(RT_ms)==1) = [];
-RT_ms(RT_ms < 0) = 0;
+for i = 1:size(n_fish,2)
+    ang_b1 = [ang_b1 ang_b{i}];
+    sign_esc1 = [sign_esc1 sign_esc{i}];
+    mat_esc1 = [mat_esc1 mat_esc{i}];
+    fbout1 = [fbout1 fbout{i}];
+    RT_ms1 = [RT_ms1 RT_ms{i}];
+end
+ang_b1(isnan(RT_ms1)==1) = [];
+ang_b1 = mod(ang_b1,2*pi);
+ang_b1(ang_b1>pi) = ang_b1(ang_b1>pi)-2*pi;
+sign_esc1(isnan(RT_ms1)==1) = [];
+mat_esc1(isnan(RT_ms1)==1) = [];
+fbout1(isnan(RT_ms1)==1) = [];
+RT_ms1(isnan(RT_ms1)==1) = [];
+RT_ms1(RT_ms1 < 0) = 0;
+
+
+

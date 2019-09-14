@@ -131,7 +131,7 @@ for k = nb(1):nb(2)
             indbt = indbout{i};
             if isempty(indbt) == 0
                 t = find(indbt(1,:) > 150,1);
-                esc_im = (1000 + P.OMR.Duration)*150/1000 - 20;
+                esc_im = nb_frame-60;
                 if indbt(1,t) < esc_im % first bout before esc, during OMR
                     ang_b = mean(angle_OMR(i,indbt(1,t)-10:indbt(1,t)));
                     ang_b = mod(ang_b, 2*pi);
@@ -154,8 +154,9 @@ for k = nb(1):nb(2)
         
         save(fullfile(path(1:end-21), 'OMR_ac_data.mat'), 'angle_before', 'escape_matrix',...
             'fish_bout_OMR', 'fish_to_consider', 'fish_to_consider_FT',...
-            'nb_fish', 'nb_fish_escape', 'reaction_time', 'reaction_time_ms',...
-            'sign_escape', 'mat_first_turn', 'angle_OMR', 'angle_tail')
+            'nb_fish', 'nb_fish_escape', 'OMR_angle','reaction_time',...
+            'reaction_time_ms', 'sign_escape', 'mat_first_turn', 'angle_OMR',...
+            'angle_tail');
         disp('Data saved')
         
         % -- save OMR + ac data in a summary file

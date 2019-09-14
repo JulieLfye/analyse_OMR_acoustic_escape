@@ -9,13 +9,13 @@ F = Focus();
 
 % Experiment Protocol background
 % r = 'whole_illumination_asus_projo'; % OMR duration 0,500,1000,1500,2000
-r = 'whole_illumination'; % OMR duration 0,250,500,750,1000
-% r = 'OMR_fixed'; % OMR duration 0,250,500,750,1000
+% r = 'whole_illumination'; % OMR duration 0,250,500,750,1000
+r = 'OMR_fixed'; % OMR duration 0,250,500,750,1000
 
 F.Root = fullfile('D:\OMR_acoustic_experiments',r,'OMR_acoustic\data\');
 
 
-F.dpf = 7;
+F.dpf = 5;
 F.V = '3_0';
 
 a = F.path;
@@ -153,16 +153,19 @@ end
 %% ----- Plot -----
 
 % -- all turn
+figure
 f_plot_new_OMR_acoustic(OMR, m_all, std_all, n_f, n_f_esc, p_all, F, 'All escape');
 
-% -- SLC turn
-f_plot_new_OMR_acoustic(OMR, m_SLC, std_SLC, n_f, n_SLC, p_SLC, F, 'SLC escape');
-
-% -- LLC turn
-f_plot_new_OMR_acoustic(OMR, m_LLC, std_LLC, n_f, n_LLC, p_LLC, F, 'LLC escape');
+% % -- SLC turn
+% f_plot_new_OMR_acoustic(OMR, m_SLC, std_SLC, n_f, n_SLC, p_SLC, F, 'SLC escape');
+% 
+% % -- LLC turn
+% f_plot_new_OMR_acoustic(OMR, m_LLC, std_LLC, n_f, n_LLC, p_LLC, F, 'LLC escape');
 
 % -- Fish in the good quadrant
+figure
 f_plot_new_OMR_acoustic(OMR, m_ok, std_ok, n_f, n_ok, p_ok, F, 'Good quadrant');
 
 % -- Fish in the good quadrant without bout
+figure
 f_plot_new_OMR_acoustic(OMR, m_oknomov, std_oknomov, n_f, n_oknomov, p_oknomov, F, 'Good quadrant, no bout');

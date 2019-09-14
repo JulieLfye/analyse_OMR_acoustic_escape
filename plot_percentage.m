@@ -7,13 +7,13 @@ clc;
 F = Focus();
 
 % Experiment Protocol background
-r = 'whole_illumination_asus_projo'; % OMR duration 0,500,1000,1500,2000
-% r = 'whole_illumination'; % OMR duration 0,250,500,750,1000
+% r = 'whole_illumination_asus_projo'; % OMR duration 0,500,1000,1500,2000
+r = 'whole_illumination'; % OMR duration 0,250,500,750,1000
 % r = 'OMR_fixed'; % OMR duration 0,250,500,750,1000
 
 F.Root = fullfile('D:\OMR_acoustic_experiments',r,'OMR_acoustic\data\');
 
-F.dpf = 5;
+F.dpf = 7;
 F.V = '3_0';
 
 a = F.path;
@@ -102,8 +102,8 @@ for k = 1:size(a,1)-2
     end
     
     %% -- Probabilities --
-    p_all(k) = mean(n_fish_esc./n_fish)*100;
-    s_all(k) = std(n_fish_esc./n_fish)/sqrt(size(n_fish,2))*100;
+    p_all(k) = mean(n_fish_esc./n_fish,'omitnan')*100;
+    s_all(k) = std(n_fish_esc./n_fish,'omitnan')/sqrt(size(n_fish,2))*100;
     
     iLLC = ind_LLC;
     iSLC = ind_SLC;

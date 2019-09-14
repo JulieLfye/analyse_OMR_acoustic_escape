@@ -10,7 +10,7 @@ end
 
 xlimv = [OMR(1)-100;OMR(end)+100];
 
-figure
+% figure
 hold on
 mk = size(OMR,2);
 plot(OMR,m_ind,'-o','Color',color,'MarkerFace',color)

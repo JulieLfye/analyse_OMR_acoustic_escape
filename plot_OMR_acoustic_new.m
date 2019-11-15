@@ -46,6 +46,12 @@ p_oknomov = nan(1,5);
 pb_all = nan(1,5);
 pb_SLC = nan(1,5);
 pb_LLC = nan(1,5);
+std_oknomovSLC = nan(1,5);
+m_oknomovSLC = nan(1,5);
+p_oknomovSLC = nan(1,5);
+std_oknomovLLC = nan(1,5);
+m_oknomovLLC = nan(1,5);
+p_oknomovLLC = nan(1,5);
 
 n_f = nan(1,5);
 n_f_esc = nan(1,5);
@@ -53,6 +59,8 @@ n_SLC = nan(1,5);
 n_LLC = nan(1,5);
 n_ok = nan(1,5);
 n_oknomov = nan(1,5);
+n_oknomovSLC = nan(1,5);
+n_oknomovLLC = nan(1,5);
 
 k = 1;
 for k = 1:size(a,1)-2
@@ -116,6 +124,7 @@ for k = 1:size(a,1)-2
         indoknomov = ind(isnan(ind)==0);
         n_oknomov(k) = size(indoknomov,2);
         
+        
         %% ----- Means and std calculations -----
         % -- mean and std all escape
         std_all(k) = 1/sqrt(size(mat_esc,2));
@@ -142,6 +151,33 @@ for k = 1:size(a,1)-2
         m_oknomov(k) = mean(mat_esc(indoknomov));
         [~,p_oknomov(k)] = ttest(mat_esc(indoknomov));
         
+        % -- mean and std fish good quadrant without bout SLC
+        indoknomovSLC = intersect(ind_SLC,indoknomov);
+        if isempty(indoknomovSLC) == 0
+            std_oknomovSLC(k) = 1/sqrt(size(mat_esc(indoknomovSLC),2));
+            m_oknomovSLC(k) = mean(mat_esc(indoknomovSLC));
+            [~,p_oknomovSLC(k)] = ttest(mat_esc(indoknomovSLC));
+            n_oknomovSLC(k) = size(indoknomovSLC,2);
+        else
+            std_oknomovSLC(k) = nan;
+            m_oknomovSLC(k) = nan;
+            p_oknomovSLC(k) = nan;
+            n_oknomovSLC(k) = 0;
+        end
+        
+        % -- mean and std fish good quadrant without bout LLC
+        indoknomovLLC = intersect(ind_LLC,indoknomov);
+        if isempty(indoknomovLLC) == 0
+            std_oknomovLLC(k) = 1/sqrt(size(mat_esc(indoknomovLLC),2));
+            m_oknomovLLC(k) = mean(mat_esc(indoknomovLLC));
+            [~,p_oknomovLLC(k)] = ttest(mat_esc(indoknomovLLC));
+            n_oknomovLLC(k) = size(indoknomovLLC,2);
+        else
+            std_oknomovLLC(k) = nan;
+            m_oknomovLLC(k) = nan;
+            p_oknomovLLC(k) = nan;
+            n_oknomovLLC(k) = 0;
+        end
         
         %% ----- SLC and LLC probabilities -----
         pb_all(k) = sum(n_fish_esc)/sum(n_fish)*100;
@@ -151,21 +187,31 @@ for k = 1:size(a,1)-2
 end
 
 %% ----- Plot -----
-
-% -- all turn
-figure
-f_plot_new_OMR_acoustic(OMR, m_all, std_all, n_f, n_f_esc, p_all, F, 'All escape');
-
+% 
+% % -- all turn
+% figure(1)
+% f_plot_new_OMR_acoustic(OMR, m_all, std_all, n_f, n_f_esc, p_all, F, 'All escape');
+% 
 % % -- SLC turn
+% figure(2)
 % f_plot_new_OMR_acoustic(OMR, m_SLC, std_SLC, n_f, n_SLC, p_SLC, F, 'SLC escape');
 % 
 % % -- LLC turn
+% figure(3)
 % f_plot_new_OMR_acoustic(OMR, m_LLC, std_LLC, n_f, n_LLC, p_LLC, F, 'LLC escape');
-
-% -- Fish in the good quadrant
-figure
-f_plot_new_OMR_acoustic(OMR, m_ok, std_ok, n_f, n_ok, p_ok, F, 'Good quadrant');
+% 
+% % -- Fish in the good quadrant
+% figure(4)
+% f_plot_new_OMR_acoustic(OMR, m_ok, std_ok, n_f, n_ok, p_ok, F, 'Good quadrant');
+% 
+% % -- Fish in the good quadrant without bout
+% figure(5)
+% f_plot_new_OMR_acoustic(OMR, m_oknomov, std_oknomov, n_f, n_oknomov, p_oknomov, F, 'Good quadrant, no bout');
 
 % -- Fish in the good quadrant without bout
-figure
-f_plot_new_OMR_acoustic(OMR, m_oknomov, std_oknomov, n_f, n_oknomov, p_oknomov, F, 'Good quadrant, no bout');
+figure(1)
+f_plot_new_OMR_acoustic(OMR, m_oknomovSLC, std_oknomovSLC, n_f, n_oknomovSLC, p_oknomovSLC, F, 'Good quadrant, no bout, SLC');
+
+% -- Fish in the good quadrant without bout
+figure(2)
+f_plot_new_OMR_acoustic(OMR, m_oknomovLLC, std_oknomovLLC, n_f, n_oknomovLLC, p_oknomovLLC, F, 'Good quadrant, no bout, LLC');

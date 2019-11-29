@@ -52,7 +52,7 @@ for k = nb(1):nb(2)
         F.OMR = [num2str(m) num2str(c) num2str(d) num2str(u)];
         
         % -- Extract information from fast track
-        [nb_frame, nb_detected_object, xbody, ybody, ang_body, ang_tail]...
+        [nb_frame, nb_detected_object, xbody, ybody, ang_body,~,~, ang_tail]...
             = extract_parameters_from_fast_track(s);
         xbody_raw = xbody;
         ybody_raw = ybody;
